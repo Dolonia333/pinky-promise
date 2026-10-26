@@ -50,3 +50,4 @@ Pinky Promise demonstrates escrow-style holds. It is not a licensed escrow servi
 ## Team
 
 - Shawnaya Williams
+- Zion Van Zandt
