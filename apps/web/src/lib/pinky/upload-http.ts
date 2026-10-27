@@ -22,10 +22,13 @@ export async function handleProfilePost(request: Request): Promise<Response> {
   const result = await redeemCode(record.code, record.payload);
   if (!result.ok) return json({ error: result.error }, result.status);
   const origin = new URL(request.url).origin;
-  return json({
-    id: result.profileId,
-    url: `${origin}/profile`,
-    profileId: result.profileId,
-    path: result.path,
-  });
+  return json(
+    {
+      id: result.profileId,
+      url: `${origin}/profile`,
+      profileId: result.profileId,
+      path: result.path,
+    },
+    201,
+  );
 }

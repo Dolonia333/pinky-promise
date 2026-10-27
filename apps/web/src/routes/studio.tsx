@@ -7,6 +7,14 @@ export const Route = createFileRoute("/studio")({ component: Studio });
 
 const COMMAND = "npx pinky-promise-cli analyze";
 
+function remaining(expiresAt: string): string {
+  const ms = new Date(expiresAt).getTime() - Date.now();
+  if (ms <= 0) return "Expired";
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
 function Studio() {
   const router = useRouter();
   const [busy, setBusy] = useState("");
@@ -53,6 +61,14 @@ function Studio() {
 
   const profile = studio?.profile;
   const active = code ?? studio?.code ?? null;
+  const [left, setLeft] = useState("");
+  useEffect(() => {
+    if (!active) return;
+    const tick = () => setLeft(remaining(active.expiresAt));
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [active]);
 
   return (
     <Shell>
@@ -87,9 +103,7 @@ function Studio() {
           {active ? (
             <div className="mt-3">
               <p className="font-display text-3xl tracking-wide">{active.code}</p>
-              <p className="text-xs text-dust">
-                Expires {new Date(active.expiresAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
-              </p>
+              <p className="text-xs text-dust">{left || "15:00"} left</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <CopyButton text={active.code} label="Copy code" />
                 <CopyButton text={COMMAND} label="Copy command" />

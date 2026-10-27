@@ -34,7 +34,19 @@ function Login() {
     <main className="mx-auto flex min-h-screen max-w-md flex-col px-4 py-8">
       <Wordmark />
       <h1 className="mt-10 font-display text-4xl italic">Sign in to keep your profile.</h1>
-      <p className="mt-3 text-sm text-dust">Email is the backup. Google and X work too. No anonymous rooms.</p>
+      <p className="mt-3 text-sm text-dust">GitHub is the main sign-in. Email is the backup.</p>
+      <div className="mt-8 space-y-2">
+        {GROK_PROVIDERS.map((provider) => (
+          <button
+            key={provider.providerId}
+            type="button"
+            className={`min-h-11 w-full rounded-full text-sm ${provider.providerId === "grok-github" ? "bg-seal font-medium text-seal-ink" : "border border-line text-cream"}`}
+            onClick={() => signIn(provider.providerId, { callbackURL: "/studio" })}
+          >
+            Continue with {provider.label}
+          </button>
+        ))}
+      </div>
       <form onSubmit={onSubmit} className="mt-8 space-y-3">
         {mode === "up" ? (
           <label className="block text-sm">
@@ -87,18 +99,6 @@ function Login() {
           {mode === "up" ? "I already have an account" : "Need an account?"}
         </button>
       </form>
-      <div className="mt-6 space-y-2">
-        {GROK_PROVIDERS.map((provider) => (
-          <button
-            key={provider.providerId}
-            type="button"
-            className="min-h-11 w-full rounded-full border border-line text-sm"
-            onClick={() => signIn(provider.providerId, { callbackURL: "/studio" })}
-          >
-            Continue with {provider.label}
-          </button>
-        ))}
-      </div>
     </main>
   );
 }
