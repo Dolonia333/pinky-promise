@@ -152,9 +152,7 @@ export function FounderTest() {
                   onClick={() => setChosen(answer.id)}
                   className={
                     "min-h-14 rounded-card border px-4 py-3 text-left text-base leading-snug transition-colors " +
-                    (selected
-                      ? "border-seal bg-raised text-cream"
-                      : "border-line bg-paper text-cream hover:bg-raised")
+                    (selected ? "border-seal bg-raised text-cream" : "border-line bg-paper text-cream hover:bg-raised")
                   }
                 >
                   {answer.text}

@@ -3,15 +3,7 @@
 export const AXES = ["start", "trust", "call", "scope"] as const;
 export type Axis = (typeof AXES)[number];
 
-export type Pole =
-  | "page"
-  | "hands"
-  | "proof"
-  | "trial"
-  | "room"
-  | "helm"
-  | "one"
-  | "several";
+export type Pole = "page" | "hands" | "proof" | "trial" | "room" | "helm" | "one" | "several";
 
 export const POLES: Record<Axis, [Pole, Pole]> = {
   start: ["page", "hands"],
@@ -327,36 +319,204 @@ function pair(
  */
 export const QUESTIONS: Question[] = [
   // start: page vs hands
-  pair(1, "start", "A partner texts", "“Let's just start.” First move?", "They wait — you won't start until the page says who it's for.", "Holes stay — you send something rough tomorrow."),
-  pair(2, "start", "Monday is empty", "Nothing on the calendar. The hour goes to…", "Nothing ships — you write the next three steps.", "The list stays blank — one small thing hits a person before lunch."),
-  pair(3, "start", "Two ideas, one week", "You can only do one properly. The other…", "Gets no time — you write the path for the first.", "Gets no time — you ship the first and leave the other."),
-  pair(4, "start", "Kickoff feels fuzzy", "The goal is still vague. You…", "Freeze build — clarify the page before anyone codes.", "Ship a stub — let the stub force the clarity."),
-  pair(5, "start", "Investor wants a demo", "They asked for something tomorrow. You…", "Say not yet — the story on paper isn't ready.", "Send a rough cut — explain the holes live."),
-  pair(6, "start", "New hire day one", "They ask what to do first. You hand them…", "A written brief — no build until it names the bet.", "A tiny task — they'll learn the bet by shipping."),
+  pair(
+    1,
+    "start",
+    "A partner texts",
+    "“Let's just start.” First move?",
+    "They wait — you won't start until the page says who it's for.",
+    "Holes stay — you send something rough tomorrow.",
+  ),
+  pair(
+    2,
+    "start",
+    "Monday is empty",
+    "Nothing on the calendar. The hour goes to…",
+    "Nothing ships — you write the next three steps.",
+    "The list stays blank — one small thing hits a person before lunch.",
+  ),
+  pair(
+    3,
+    "start",
+    "Two ideas, one week",
+    "You can only do one properly. The other…",
+    "Gets no time — you write the path for the first.",
+    "Gets no time — you ship the first and leave the other.",
+  ),
+  pair(
+    4,
+    "start",
+    "Kickoff feels fuzzy",
+    "The goal is still vague. You…",
+    "Freeze build — clarify the page before anyone codes.",
+    "Ship a stub — let the stub force the clarity.",
+  ),
+  pair(
+    5,
+    "start",
+    "Investor wants a demo",
+    "They asked for something tomorrow. You…",
+    "Say not yet — the story on paper isn't ready.",
+    "Send a rough cut — explain the holes live.",
+  ),
+  pair(
+    6,
+    "start",
+    "New hire day one",
+    "They ask what to do first. You hand them…",
+    "A written brief — no build until it names the bet.",
+    "A tiny task — they'll learn the bet by shipping.",
+  ),
 
   // trust: proof vs trial
-  pair(7, "trust", "The deck looks finished", "Numbers are still guesses. You…", "Nobody sees it — it stays put until numbers are real.", "A guess goes out — you fix numbers from the replies."),
-  pair(8, "trust", "A plan you doubt", "Someone you respect pushes a path you don't buy. You…", "Wait — you won't move until you can show it fails.", "Try it — one person, one week, then decide."),
-  pair(9, "trust", "Week almost gone", "Lots of talk, nothing finished. You…", "Throw out every claim you can't stand behind.", "Send several rough claims — some will be wrong."),
-  pair(10, "trust", "Landing page copy", "The promise still feels soft. You…", "Hold publish — the claim has to be true first.", "Publish soft — learn which line people click."),
-  pair(11, "trust", "Pricing guess", "You don't know what they'll pay. You…", "Pause selling — get one hard data point first.", "Name a price — let the first ten answers teach you."),
-  pair(12, "trust", "Feature almost done", "One edge case still fails. You…", "Block release — it ships when the claim holds.", "Ship the core — note the edge and watch."),
+  pair(
+    7,
+    "trust",
+    "The deck looks finished",
+    "Numbers are still guesses. You…",
+    "Nobody sees it — it stays put until numbers are real.",
+    "A guess goes out — you fix numbers from the replies.",
+  ),
+  pair(
+    8,
+    "trust",
+    "A plan you doubt",
+    "Someone you respect pushes a path you don't buy. You…",
+    "Wait — you won't move until you can show it fails.",
+    "Try it — one person, one week, then decide.",
+  ),
+  pair(
+    9,
+    "trust",
+    "Week almost gone",
+    "Lots of talk, nothing finished. You…",
+    "Throw out every claim you can't stand behind.",
+    "Send several rough claims — some will be wrong.",
+  ),
+  pair(
+    10,
+    "trust",
+    "Landing page copy",
+    "The promise still feels soft. You…",
+    "Hold publish — the claim has to be true first.",
+    "Publish soft — learn which line people click.",
+  ),
+  pair(
+    11,
+    "trust",
+    "Pricing guess",
+    "You don't know what they'll pay. You…",
+    "Pause selling — get one hard data point first.",
+    "Name a price — let the first ten answers teach you.",
+  ),
+  pair(
+    12,
+    "trust",
+    "Feature almost done",
+    "One edge case still fails. You…",
+    "Block release — it ships when the claim holds.",
+    "Ship the core — note the edge and watch.",
+  ),
 
   // call: room vs helm
-  pair(13, "call", "Nobody owns the call", "The team is moving with no decider. You…", "Slip a day — ask what the group heard first.", "Close it — name one owner and end the thread."),
-  pair(14, "call", "Favorite idea cracks", "A customer kills the idea you liked. You…", "Delay the cut — two more conversations first.", "Kill it now — move the team the same day."),
-  pair(15, "call", "A helper drifts", "They start solving a different problem. You…", "Hear why they left the brief before you stop them.", "Stop them mid-task — drag them back."),
-  pair(16, "call", "Slack is spinning", "The thread has twenty unread takes. You…", "Ask each person what they heard — then decide.", "Pick a direction in one message — debate later."),
-  pair(17, "call", "Co-founder stalemate", "You're split 50/50 on the next bet. You…", "Keep talking until you both can live with it.", "Call it — one of you owns the pick this week."),
-  pair(18, "call", "Scope creep", "A friendly customer wants “just one more.” You…", "Listen out the ask — maybe the brief was wrong.", "Say no today — park it on a later list."),
+  pair(
+    13,
+    "call",
+    "Nobody owns the call",
+    "The team is moving with no decider. You…",
+    "Slip a day — ask what the group heard first.",
+    "Close it — name one owner and end the thread.",
+  ),
+  pair(
+    14,
+    "call",
+    "Favorite idea cracks",
+    "A customer kills the idea you liked. You…",
+    "Delay the cut — two more conversations first.",
+    "Kill it now — move the team the same day.",
+  ),
+  pair(
+    15,
+    "call",
+    "A helper drifts",
+    "They start solving a different problem. You…",
+    "Hear why they left the brief before you stop them.",
+    "Stop them mid-task — drag them back.",
+  ),
+  pair(
+    16,
+    "call",
+    "Slack is spinning",
+    "The thread has twenty unread takes. You…",
+    "Ask each person what they heard — then decide.",
+    "Pick a direction in one message — debate later.",
+  ),
+  pair(
+    17,
+    "call",
+    "Co-founder stalemate",
+    "You're split 50/50 on the next bet. You…",
+    "Keep talking until you both can live with it.",
+    "Call it — one of you owns the pick this week.",
+  ),
+  pair(
+    18,
+    "call",
+    "Scope creep",
+    "A friendly customer wants “just one more.” You…",
+    "Listen out the ask — maybe the brief was wrong.",
+    "Say no today — park it on a later list.",
+  ),
 
   // scope: one vs several
-  pair(19, "scope", "A second good idea", "First bet still open. Another shows up. You…", "Kill it — no second bet until the first is shown.", "Keep it alive — first bet gets less of you."),
-  pair(20, "scope", "Customer still a blur", "Morning free, no meetings. You…", "Pick one kind of person — ignore the rest.", "Keep two kinds in the notes — no single pick."),
-  pair(21, "scope", "What you will show", "Friday needs a reaction. You…", "One rough version — nothing else ships.", "Three thin versions — none fully finished."),
-  pair(22, "scope", "Roadmap fight", "The board wants three themes. You…", "Cut to one theme — the other two wait.", "Run thin work on all three this sprint."),
-  pair(23, "scope", "Hiring slot", "One seat, two strong candidates. You…", "Hire for the one bet — the other waitlists.", "Hire the generalist — cover more than one bet."),
-  pair(24, "scope", "Side project itch", "A weekend idea looks hot. You…", "Park it — this week's bet already owns you.", "Spike it for two hours — keep both alive."),
+  pair(
+    19,
+    "scope",
+    "A second good idea",
+    "First bet still open. Another shows up. You…",
+    "Kill it — no second bet until the first is shown.",
+    "Keep it alive — first bet gets less of you.",
+  ),
+  pair(
+    20,
+    "scope",
+    "Customer still a blur",
+    "Morning free, no meetings. You…",
+    "Pick one kind of person — ignore the rest.",
+    "Keep two kinds in the notes — no single pick.",
+  ),
+  pair(
+    21,
+    "scope",
+    "What you will show",
+    "Friday needs a reaction. You…",
+    "One rough version — nothing else ships.",
+    "Three thin versions — none fully finished.",
+  ),
+  pair(
+    22,
+    "scope",
+    "Roadmap fight",
+    "The board wants three themes. You…",
+    "Cut to one theme — the other two wait.",
+    "Run thin work on all three this sprint.",
+  ),
+  pair(
+    23,
+    "scope",
+    "Hiring slot",
+    "One seat, two strong candidates. You…",
+    "Hire for the one bet — the other waitlists.",
+    "Hire the generalist — cover more than one bet.",
+  ),
+  pair(
+    24,
+    "scope",
+    "Side project itch",
+    "A weekend idea looks hot. You…",
+    "Park it — this week's bet already owns you.",
+    "Spike it for two hours — keep both alive.",
+  ),
 ];
 
 const ZERO: Record<Pole, number> = {
