@@ -14,7 +14,7 @@ Tick items as you finish them, in your pull request or right here on GitHub. The
 
 ## Tuesday, Oct 27
 
-- [ ] **Z1** Run `apps/web/migrations/0001_auth.sql` in the Supabase SQL Editor, then confirm every table shows RLS enabled
+- [x] **Z1** Sign-in tables from `0001_auth.sql` are in Supabase, all 12 tables have RLS on, and `_migrations` already records `0001` and `0002`, so `db:migrate` skips them
 - [x] **Z2** `POST /upload-codes` and `POST /profiles` work: valid code accepted, missing, used, or expired code refused
 - [ ] **Z3** Deploy the web app (API is part of it). CI runs typecheck, tests, and format check on every pull request
   - [ ] `DATABASE_URL` set in the host
