@@ -40,10 +40,19 @@ const NAV = [
   { to: "/program", label: "Room", icon: Users },
 ] as const;
 
-export function Shell({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
+export function Shell({
+  children,
+  wide = false,
+  guest = false,
+}: {
+  children: ReactNode;
+  wide?: boolean;
+  /** Skip sign-in — for working on the public founder test. */
+  guest?: boolean;
+}) {
   const { user, isPending } = useCurrentUserState();
   const path = useRouterState({ select: (s) => s.location.pathname });
-  if (isPending) {
+  if (!guest && isPending) {
     return (
       <div className="min-h-screen bg-ink px-5 pt-16">
         <div className="mx-auto h-8 w-40 animate-pulse rounded-full bg-raised" />
@@ -51,7 +60,17 @@ export function Shell({ children, wide = false }: { children: ReactNode; wide?: 
       </div>
     );
   }
-  if (!user) return <RedirectToSignIn />;
+  if (!guest && !user) return <RedirectToSignIn />;
+  if (guest) {
+    return (
+      <div className="min-h-screen bg-ink">
+        <header className="sticky top-0 z-10 flex items-center border-b border-line bg-ink/90 px-4 py-3 backdrop-blur">
+          <Wordmark />
+        </header>
+        <main className={`mx-auto w-full px-4 pb-16 pt-5 ${wide ? "max-w-3xl" : "max-w-xl"}`}>{children}</main>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-ink pb-24">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-ink/90 px-4 py-3 backdrop-blur">

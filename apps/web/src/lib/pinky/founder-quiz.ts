@@ -1,4 +1,4 @@
-/** Exact founder test from https://pinkypromise.grok.me — sixteen types, four splits. */
+/** Sixteen founder types · four splits · axis-pure scenes. */
 
 export const AXES = ["start", "trust", "call", "scope"] as const;
 export type Axis = (typeof AXES)[number];
@@ -46,7 +46,6 @@ export type Group = {
   plain: string;
 };
 
-/** Four groups — same shape as 16Personalities' Analysts / Diplomats / Sentinels / Explorers. */
 export const GROUPS: Group[] = [
   {
     id: "paper-proof",
@@ -81,6 +80,28 @@ const NEED: Record<Pole, string> = {
   several: "kill the extra bets and stay on one",
 };
 
+const STRENGTH: Record<Pole, string> = {
+  page: "You clarify the path before spend.",
+  hands: "You get something real in front of people fast.",
+  proof: "You won't claim what you can't show.",
+  trial: "You learn from small bets before the big one.",
+  room: "You keep listening before the decision locks.",
+  helm: "You close the call when the work drifts.",
+  one: "You protect focus on a single bet.",
+  several: "You keep more than one path alive.",
+};
+
+const BLIND: Record<Pole, string> = {
+  page: "The page can delay the first real contact.",
+  hands: "Speed can outrun the brief.",
+  proof: "Waiting for proof can miss the window.",
+  trial: "Rough trials can confuse the room.",
+  room: "Listening forever can stall the week.",
+  helm: "Closing hard can shut out a better path.",
+  one: "One bet can miss a better second idea.",
+  several: "Several bets can thin every one of them.",
+};
+
 export type Poles = { start: Pole; trust: Pole; call: Pole; scope: Pole };
 
 export type Archetype = {
@@ -91,6 +112,8 @@ export type Archetype = {
   name: string;
   plain: string;
   need: string;
+  strengths: string[];
+  blinds: string[];
 };
 
 function archetype(poles: Poles, synonym: string, name: string, plain: string): Archetype {
@@ -103,10 +126,11 @@ function archetype(poles: Poles, synonym: string, name: string, plain: string): 
     name,
     plain,
     need: `Look for someone who will ${NEED[poles.start]}, and who will ${NEED[poles.call]}.`,
+    strengths: [STRENGTH[poles.start], STRENGTH[poles.trust], STRENGTH[poles.call], STRENGTH[poles.scope]],
+    blinds: [BLIND[poles.start], BLIND[poles.trust], BLIND[poles.call], BLIND[poles.scope]],
   };
 }
 
-/** The sixteen founder types. */
 export const ARCHETYPES: Archetype[] = [
   archetype(
     { start: "page", trust: "proof", call: "room", scope: "one" },
@@ -212,8 +236,58 @@ export function groupById(id: GroupId): Group {
   return found;
 }
 
+export function archetypeById(id: string): Archetype {
+  const found = ARCHETYPES.find((item) => item.id === id);
+  if (!found) throw new Error(`Unknown archetype ${id}`);
+  return found;
+}
+
 export function archetypeKey(poles: Poles): string {
   return `${poles.start}-${poles.trust}-${poles.call}-${poles.scope}`;
+}
+
+export function typesInGroup(groupId: GroupId): Archetype[] {
+  return ARCHETYPES.filter((item) => item.group === groupId);
+}
+
+/** Flips start + call — the partner who covers how you begin and who decides. */
+export function complementaryArchetype(type: Archetype): Archetype {
+  const [startLeft, startRight] = POLES.start;
+  const [callLeft, callRight] = POLES.call;
+  const poles: Poles = {
+    start: type.poles.start === startLeft ? startRight : startLeft,
+    trust: type.poles.trust,
+    call: type.poles.call === callLeft ? callRight : callLeft,
+    scope: type.poles.scope,
+  };
+  return archetypeById(archetypeKey(poles));
+}
+
+/** Likely friction lines from your poles. */
+export function frictionPoints(type: Archetype): string[] {
+  const lines: string[] = [];
+  if (type.poles.start === "page" && type.poles.trust === "proof") {
+    lines.push("You'll want the brief finished while a partner wants something in someone's hands.");
+  }
+  if (type.poles.start === "hands" && type.poles.trust === "trial") {
+    lines.push("You'll ship rough while a careful partner still wants the claim to hold.");
+  }
+  if (type.poles.call === "helm") {
+    lines.push("You'll close the thread; a listening partner may feel cut out.");
+  }
+  if (type.poles.call === "room") {
+    lines.push("You'll keep the room open; a decisive partner may feel the week is stalling.");
+  }
+  if (type.poles.scope === "one") {
+    lines.push("You'll kill side bets; a wide partner will want a second path alive.");
+  }
+  if (type.poles.scope === "several") {
+    lines.push("You'll keep several bets; a focused partner will say nothing is finished.");
+  }
+  if (lines.length < 2) {
+    lines.push(BLIND[type.poles.start], BLIND[type.poles.trust]);
+  }
+  return lines.slice(0, 3);
 }
 
 export type Answer = { id: string; text: string; kind: Pole };
@@ -223,147 +297,66 @@ export type Question = {
   scene: string;
   prompt: string;
   axis: Axis;
-  answers: [Answer, Answer, Answer];
+  answers: [Answer, Answer];
 };
 
-function answer(question: number, slot: number, kind: Pole, text: string): Answer {
-  return { id: `q${question}${String.fromCharCode(97 + slot)}`, kind, text };
+function pair(
+  question: number,
+  axis: Axis,
+  scene: string,
+  prompt: string,
+  leftText: string,
+  rightText: string,
+): Question {
+  const [left, right] = POLES[axis];
+  return {
+    id: `q${question}`,
+    scene,
+    prompt,
+    axis,
+    answers: [
+      { id: `q${question}a`, kind: left, text: leftText },
+      { id: `q${question}b`, kind: right, text: rightText },
+    ],
+  };
 }
 
-/** Twelve scenes. Three costs each. */
+/**
+ * 24 scenes · 6 per axis · each answer stays on that axis.
+ * Copy leads with the cost, kept short for phones.
+ */
 export const QUESTIONS: Question[] = [
-  {
-    id: "q1",
-    scene: "A partner texts",
-    prompt: "“Let's just start.” What do you do first?",
-    axis: "start",
-    answers: [
-      answer(1, 0, "page", "They wait on your page. You will not start until it says who it is for."),
-      answer(1, 1, "hands", "You will have to explain the holes. You send something rough tomorrow."),
-      answer(1, 2, "proof", "The rest of the idea sits. You only start the part you can already show."),
-    ],
-  },
-  {
-    id: "q2",
-    scene: "Monday is empty",
-    prompt: "Nothing is on the calendar. What gets the hour?",
-    axis: "start",
-    answers: [
-      answer(2, 0, "page", "Nothing goes out the door. The hour goes to writing the next three steps."),
-      answer(2, 1, "hands", "The rest of the list stays blank. You put one small thing in front of a person before lunch."),
-      answer(2, 2, "room", "The calendar stays empty. The hour goes to a question you still have not asked."),
-    ],
-  },
-  {
-    id: "q3",
-    scene: "Two ideas, one week",
-    prompt: "You can only touch one of them properly. What happens to the other?",
-    axis: "start",
-    answers: [
-      answer(3, 0, "page", "The second idea gets no time. You write the path for the first and leave the other unnamed."),
-      answer(3, 1, "hands", "The second idea gets no time. You ship the first and leave the other on the table."),
-      answer(3, 2, "one", "You ignore a good second idea. This week has one bet, even if the other is better."),
-    ],
-  },
-  {
-    id: "q4",
-    scene: "The deck looks finished",
-    prompt: "The numbers on the page are still guesses. What happens to it?",
-    axis: "trust",
-    answers: [
-      answer(4, 0, "proof", "Nobody sees the deck. It stays in the folder until the numbers are real."),
-      answer(4, 1, "trial", "A guess goes out with your name on it. You send it and fix the numbers from the replies."),
-      answer(4, 2, "page", "The deck waits. You rewrite who it is for before you touch the numbers."),
-    ],
-  },
-  {
-    id: "q5",
-    scene: "A plan you doubt",
-    prompt: "Someone you respect pushes a direction you do not believe. You...",
-    axis: "trust",
-    answers: [
-      answer(5, 0, "proof", "The decision waits on you. You do not move until you can show their version fails."),
-      answer(5, 1, "trial", "The week goes to a bet you doubt. You try their version with one person."),
-      answer(5, 2, "helm", "You may be wrong in public. You refuse their direction and name your own."),
-    ],
-  },
-  {
-    id: "q6",
-    scene: "The week is almost gone",
-    prompt: "A lot got discussed. Nothing feels finished. You...",
-    axis: "trust",
-    answers: [
-      answer(6, 0, "proof", "You throw out every claim you cannot stand behind. The rest of the week is lost."),
-      answer(6, 1, "trial", "You send several rough claims. Some of them will be wrong in front of people."),
-      answer(6, 2, "several", "You keep four bets alive. None of them gets a full proof this week."),
-    ],
-  },
-  {
-    id: "q7",
-    scene: "Nobody owns the call",
-    prompt: "The team is moving, but nobody has said who decides. You...",
-    axis: "call",
-    answers: [
-      answer(7, 0, "room", "The call slips a day. You ask what the group heard before anyone decides."),
-      answer(7, 1, "helm", "Everyone else loses a say. You name one person and close the thread."),
-      answer(7, 2, "hands", "You skip the debate. A rough version goes out, and that is the decision."),
-    ],
-  },
-  {
-    id: "q8",
-    scene: "The favorite idea cracks",
-    prompt: "A customer kills the idea you liked most. You...",
-    axis: "call",
-    answers: [
-      answer(8, 0, "room", "You delay the cut. You book two more conversations before you bury it or keep it."),
-      answer(8, 1, "helm", "You might bury the right one. You kill it now and move the team."),
-      answer(8, 2, "trial", "You do not decide. You send both versions to one person each and wait."),
-    ],
-  },
-  {
-    id: "q9",
-    scene: "A helper drifts",
-    prompt: "Someone you hired starts solving a different problem. You...",
-    axis: "call",
-    answers: [
-      answer(9, 0, "room", "Their detour gets the hour. You hear why they left the brief before you stop them."),
-      answer(9, 1, "helm", "Their other idea dies. You stop them mid-task and drag them back."),
-      answer(9, 2, "one", "You refuse the new problem even if it is real. The week already has its bet."),
-    ],
-  },
-  {
-    id: "q10",
-    scene: "A second good idea",
-    prompt: "The first bet is still open. Another good one shows up. You...",
-    axis: "scope",
-    answers: [
-      answer(10, 0, "one", "A good idea dies. You will not add a second bet until the first has been shown."),
-      answer(10, 1, "several", "The first bet gets less of you. You keep the second one alive beside it."),
-      answer(10, 2, "proof", "You add neither. You stay on the only claim you can already prove."),
-    ],
-  },
-  {
-    id: "q11",
-    scene: "The customer is still a blur",
-    prompt: "You have a morning and no meetings. How do you use it?",
-    axis: "scope",
-    answers: [
-      answer(11, 0, "one", "You may have picked the wrong person. You ignore every other kind of customer."),
-      answer(11, 1, "several", "You leave with no single choice. You keep two kinds of customer in the notes."),
-      answer(11, 2, "room", "You do not pick a customer. The morning goes to listening, not to a list."),
-    ],
-  },
-  {
-    id: "q12",
-    scene: "What you will show",
-    prompt: "Friday needs something a person can react to. You...",
-    axis: "scope",
-    answers: [
-      answer(12, 0, "one", "Nothing else ships. The week goes to a single rough version."),
-      answer(12, 1, "several", "Every version stays thin. You send three small ones instead of finishing one."),
-      answer(12, 2, "hands", "You do not settle the list. You send whatever is ready and drop the rest."),
-    ],
-  },
+  // start: page vs hands
+  pair(1, "start", "A partner texts", "“Let's just start.” First move?", "They wait — you won't start until the page says who it's for.", "Holes stay — you send something rough tomorrow."),
+  pair(2, "start", "Monday is empty", "Nothing on the calendar. The hour goes to…", "Nothing ships — you write the next three steps.", "The list stays blank — one small thing hits a person before lunch."),
+  pair(3, "start", "Two ideas, one week", "You can only do one properly. The other…", "Gets no time — you write the path for the first.", "Gets no time — you ship the first and leave the other."),
+  pair(4, "start", "Kickoff feels fuzzy", "The goal is still vague. You…", "Freeze build — clarify the page before anyone codes.", "Ship a stub — let the stub force the clarity."),
+  pair(5, "start", "Investor wants a demo", "They asked for something tomorrow. You…", "Say not yet — the story on paper isn't ready.", "Send a rough cut — explain the holes live."),
+  pair(6, "start", "New hire day one", "They ask what to do first. You hand them…", "A written brief — no build until it names the bet.", "A tiny task — they'll learn the bet by shipping."),
+
+  // trust: proof vs trial
+  pair(7, "trust", "The deck looks finished", "Numbers are still guesses. You…", "Nobody sees it — it stays put until numbers are real.", "A guess goes out — you fix numbers from the replies."),
+  pair(8, "trust", "A plan you doubt", "Someone you respect pushes a path you don't buy. You…", "Wait — you won't move until you can show it fails.", "Try it — one person, one week, then decide."),
+  pair(9, "trust", "Week almost gone", "Lots of talk, nothing finished. You…", "Throw out every claim you can't stand behind.", "Send several rough claims — some will be wrong."),
+  pair(10, "trust", "Landing page copy", "The promise still feels soft. You…", "Hold publish — the claim has to be true first.", "Publish soft — learn which line people click."),
+  pair(11, "trust", "Pricing guess", "You don't know what they'll pay. You…", "Pause selling — get one hard data point first.", "Name a price — let the first ten answers teach you."),
+  pair(12, "trust", "Feature almost done", "One edge case still fails. You…", "Block release — it ships when the claim holds.", "Ship the core — note the edge and watch."),
+
+  // call: room vs helm
+  pair(13, "call", "Nobody owns the call", "The team is moving with no decider. You…", "Slip a day — ask what the group heard first.", "Close it — name one owner and end the thread."),
+  pair(14, "call", "Favorite idea cracks", "A customer kills the idea you liked. You…", "Delay the cut — two more conversations first.", "Kill it now — move the team the same day."),
+  pair(15, "call", "A helper drifts", "They start solving a different problem. You…", "Hear why they left the brief before you stop them.", "Stop them mid-task — drag them back."),
+  pair(16, "call", "Slack is spinning", "The thread has twenty unread takes. You…", "Ask each person what they heard — then decide.", "Pick a direction in one message — debate later."),
+  pair(17, "call", "Co-founder stalemate", "You're split 50/50 on the next bet. You…", "Keep talking until you both can live with it.", "Call it — one of you owns the pick this week."),
+  pair(18, "call", "Scope creep", "A friendly customer wants “just one more.” You…", "Listen out the ask — maybe the brief was wrong.", "Say no today — park it on a later list."),
+
+  // scope: one vs several
+  pair(19, "scope", "A second good idea", "First bet still open. Another shows up. You…", "Kill it — no second bet until the first is shown.", "Keep it alive — first bet gets less of you."),
+  pair(20, "scope", "Customer still a blur", "Morning free, no meetings. You…", "Pick one kind of person — ignore the rest.", "Keep two kinds in the notes — no single pick."),
+  pair(21, "scope", "What you will show", "Friday needs a reaction. You…", "One rough version — nothing else ships.", "Three thin versions — none fully finished."),
+  pair(22, "scope", "Roadmap fight", "The board wants three themes. You…", "Cut to one theme — the other two wait.", "Run thin work on all three this sprint."),
+  pair(23, "scope", "Hiring slot", "One seat, two strong candidates. You…", "Hire for the one bet — the other waitlists.", "Hire the generalist — cover more than one bet."),
+  pair(24, "scope", "Side project itch", "A weekend idea looks hot. You…", "Park it — this week's bet already owns you.", "Spike it for two hours — keep both alive."),
 ];
 
 const ZERO: Record<Pole, number> = {
@@ -417,7 +410,7 @@ export function scorePicks(picks: Answer[]): QuizResult {
   const counts = { ...ZERO };
   for (const pick of picks) counts[pick.kind] += 1;
   const axes = axisResults(counts);
-  if (picks.length < 3) {
+  if (picks.length < 4) {
     return { answered: picks.length, counts, axes, archetype: null, tied: [] };
   }
   const decided = AXES.every((axis) => axes[axis].winner !== null);
@@ -432,7 +425,6 @@ export function scorePicks(picks: Answer[]): QuizResult {
   return { answered: picks.length, counts, axes, archetype: null, tied };
 }
 
-/** Closest other type by flipping the narrowest split. */
 export function nextRead(result: QuizResult): Archetype | null {
   if (!result.archetype) return result.tied[1] ?? null;
   const closest = AXES.map((axis) => ({
@@ -451,22 +443,65 @@ export function nextRead(result: QuizResult): Archetype | null {
   );
 }
 
-export function typesInGroup(groupId: GroupId): Archetype[] {
-  return ARCHETYPES.filter((item) => item.group === groupId);
-}
-
 export function pickFor(question: Question, kind: Pole): Answer {
   const match = question.answers.find((item) => item.kind === kind);
   if (!match) throw new Error(`${question.id} has no ${kind}`);
   return match;
 }
 
-/** All twelve answers aimed at one pole set → that archetype. */
 export function picksForArchetype(target: Archetype): Answer[] {
-  return QUESTIONS.map((question) => {
-    const want = target.poles[question.axis];
-    const exact = question.answers.find((item) => item.kind === want);
-    if (exact) return exact;
-    return question.answers[0];
-  });
+  return QUESTIONS.map((question) => pickFor(question, target.poles[question.axis]));
+}
+
+/** Every question's answers stay on its axis. */
+export function assertAxisPure(questions: Question[] = QUESTIONS): void {
+  for (const question of questions) {
+    const allowed = new Set(POLES[question.axis]);
+    for (const answer of question.answers) {
+      if (!allowed.has(answer.kind)) {
+        throw new Error(`${question.id} answer ${answer.id} leaves axis ${question.axis}`);
+      }
+    }
+  }
+}
+
+export type SavedResult = {
+  archetypeId: string | null;
+  tiedIds: string[];
+  rating: number | null;
+  feedback: string;
+  savedAt: string;
+  pickIds: string[];
+};
+
+const STORAGE_KEY = "pinky-founder-test-v2";
+
+export function saveResult(payload: SavedResult): void {
+  if (typeof localStorage === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+export function loadResult(): SavedResult | null {
+  if (typeof localStorage === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as SavedResult;
+  } catch {
+    return null;
+  }
+}
+
+export function clearResult(): void {
+  if (typeof localStorage === "undefined") return;
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+export function shareText(type: Archetype): string {
+  const partner = complementaryArchetype(type);
+  return [
+    `I'm ${type.synonym} (${type.name}) on Pinky Promise.`,
+    type.plain,
+    `Co-founder fit: ${partner.synonym} — ${type.need}`,
+  ].join("\n");
 }

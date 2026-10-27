@@ -18,6 +18,7 @@ import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as ProgramRouteImport } from './routes/program'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StudioRouteImport } from './routes/studio'
+import { Route as TypesRouteImport } from './routes/types'
 import { Route as UploadCodesRouteImport } from './routes/upload-codes'
 import { Route as ApiProfilesRouteImport } from './routes/api/profiles'
 import { Route as ChallengeIndexRouteImport } from './routes/challenge.index'
@@ -25,6 +26,8 @@ import { Route as ChallengeIdRouteImport } from './routes/challenge.$id'
 import { Route as ITokenRouteImport } from './routes/i.$token'
 import { Route as LegalPageRouteImport } from './routes/legal.$page'
 import { Route as ReportsIdRouteImport } from './routes/reports.$id'
+import { Route as TypesIndexRouteImport } from './routes/types.index'
+import { Route as TypesIdRouteImport } from './routes/types.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -72,6 +75,11 @@ const StudioRoute = StudioRouteImport.update({
   path: '/studio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TypesRoute = TypesRouteImport.update({
+  id: '/types',
+  path: '/types',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UploadCodesRoute = UploadCodesRouteImport.update({
   id: '/upload-codes',
   path: '/upload-codes',
@@ -107,6 +115,16 @@ const ReportsIdRoute = ReportsIdRouteImport.update({
   path: '/reports/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TypesIndexRoute = TypesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TypesRoute,
+} as any)
+const TypesIdRoute = TypesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => TypesRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -123,13 +141,16 @@ export interface FileRoutesByFullPath {
   '/program': typeof ProgramRoute
   '/settings': typeof SettingsRoute
   '/studio': typeof StudioRoute
+  '/types': typeof TypesRouteWithChildren
   '/upload-codes': typeof UploadCodesRoute
   '/api/profiles': typeof ApiProfilesRoute
   '/challenge/$id': typeof ChallengeIdRoute
   '/i/$token': typeof ITokenRoute
   '/legal/$page': typeof LegalPageRoute
   '/reports/$id': typeof ReportsIdRoute
+  '/types/$id': typeof TypesIdRoute
   '/challenge/': typeof ChallengeIndexRoute
+  '/types/': typeof TypesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -147,7 +168,9 @@ export interface FileRoutesByTo {
   '/i/$token': typeof ITokenRoute
   '/legal/$page': typeof LegalPageRoute
   '/reports/$id': typeof ReportsIdRoute
+  '/types/$id': typeof TypesIdRoute
   '/challenge': typeof ChallengeIndexRoute
+  '/types': typeof TypesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -161,13 +184,16 @@ export interface FileRoutesById {
   '/program': typeof ProgramRoute
   '/settings': typeof SettingsRoute
   '/studio': typeof StudioRoute
+  '/types': typeof TypesRouteWithChildren
   '/upload-codes': typeof UploadCodesRoute
   '/api/profiles': typeof ApiProfilesRoute
   '/challenge/$id': typeof ChallengeIdRoute
   '/i/$token': typeof ITokenRoute
   '/legal/$page': typeof LegalPageRoute
   '/reports/$id': typeof ReportsIdRoute
+  '/types/$id': typeof TypesIdRoute
   '/challenge/': typeof ChallengeIndexRoute
+  '/types/': typeof TypesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -182,13 +208,16 @@ export interface FileRouteTypes {
     | '/program'
     | '/settings'
     | '/studio'
+    | '/types'
     | '/upload-codes'
     | '/api/profiles'
     | '/challenge/$id'
     | '/i/$token'
     | '/legal/$page'
     | '/reports/$id'
+    | '/types/$id'
     | '/challenge/'
+    | '/types/'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -206,7 +235,9 @@ export interface FileRouteTypes {
     | '/i/$token'
     | '/legal/$page'
     | '/reports/$id'
+    | '/types/$id'
     | '/challenge'
+    | '/types'
     | '/api/auth/$'
   id:
     | '__root__'
@@ -219,13 +250,16 @@ export interface FileRouteTypes {
     | '/program'
     | '/settings'
     | '/studio'
+    | '/types'
     | '/upload-codes'
     | '/api/profiles'
     | '/challenge/$id'
     | '/i/$token'
     | '/legal/$page'
     | '/reports/$id'
+    | '/types/$id'
     | '/challenge/'
+    | '/types/'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -239,6 +273,7 @@ export interface RootRouteChildren {
   ProgramRoute: typeof ProgramRoute
   SettingsRoute: typeof SettingsRoute
   StudioRoute: typeof StudioRoute
+  TypesRoute: typeof TypesRouteWithChildren
   UploadCodesRoute: typeof UploadCodesRoute
   ApiProfilesRoute: typeof ApiProfilesRoute
   ITokenRoute: typeof ITokenRoute
@@ -312,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/types': {
+      id: '/types'
+      path: '/types'
+      fullPath: '/types'
+      preLoaderRoute: typeof TypesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/upload-codes': {
       id: '/upload-codes'
       path: '/upload-codes'
@@ -361,6 +403,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/types/': {
+      id: '/types/'
+      path: '/'
+      fullPath: '/types/'
+      preLoaderRoute: typeof TypesIndexRouteImport
+      parentRoute: typeof TypesRoute
+    }
+    '/types/$id': {
+      id: '/types/$id'
+      path: '/$id'
+      fullPath: '/types/$id'
+      preLoaderRoute: typeof TypesIdRouteImport
+      parentRoute: typeof TypesRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -385,6 +441,18 @@ const ChallengeRouteWithChildren = ChallengeRoute._addFileChildren(
   ChallengeRouteChildren,
 )
 
+interface TypesRouteChildren {
+  TypesIdRoute: typeof TypesIdRoute
+  TypesIndexRoute: typeof TypesIndexRoute
+}
+
+const TypesRouteChildren: TypesRouteChildren = {
+  TypesIdRoute: TypesIdRoute,
+  TypesIndexRoute: TypesIndexRoute,
+}
+
+const TypesRouteWithChildren = TypesRoute._addFileChildren(TypesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChallengeRoute: ChallengeRouteWithChildren,
@@ -395,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProgramRoute: ProgramRoute,
   SettingsRoute: SettingsRoute,
   StudioRoute: StudioRoute,
+  TypesRoute: TypesRouteWithChildren,
   UploadCodesRoute: UploadCodesRoute,
   ApiProfilesRoute: ApiProfilesRoute,
   ITokenRoute: ITokenRoute,
