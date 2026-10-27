@@ -12,7 +12,8 @@
     "typecheck": "tsc -p packages/shared && tsc -p packages/cli && tsc -p packages/history && npm run typecheck --workspace @pinky-promise/web",
     "test": "vitest run",
     "format": "prettier --write .",
-    "lint": "prettier --check ."
+    "lint": "prettier --check .",
+    "history": "tsx packages/history/scripts/try-export.ts"
   },
   "engines": {
     "node": ">=20"

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ExportError, analyzeExport } from "../src";
+import { ExportError, analyzeExport, profileReport } from "../src";
 import { chatgptConversation, claudeConversation, zipped } from "./exports";
 
 const NOW = new Date("2026-10-27T18:00:00Z");
@@ -53,5 +53,14 @@ describe("what leaves the browser", () => {
   it("refuses an export with nothing from the last 12 months", () => {
     const old = chatgptConversation([{ role: "user", text: "Plan", minute: 0 }], { day: -800 });
     expect(() => analyzeExport(zipped([old]), NOW)).toThrow(ExportError);
+  });
+});
+
+describe("the local profile report", () => {
+  it("speaks in business terms and repeats nothing the person wrote", () => {
+    const lines = profileReport(analyzeExport(zipped(exportWithSecrets()), NOW)).join("\n");
+    expect(lines).toContain("Read 1 conversation from");
+    expect(lines).not.toMatch(/commit|code/i);
+    for (const secret of SECRETS) expect(lines).not.toContain(secret);
   });
 });

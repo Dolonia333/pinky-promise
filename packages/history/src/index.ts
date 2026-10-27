@@ -5,6 +5,7 @@ import { readExportFile } from "./read";
 export { ExportError, type Conversation, type Turn } from "./conversation";
 export { historyPayload, HISTORY_VERSION } from "./payload";
 export { parseExport, readExportFile } from "./read";
+export { profileReport } from "./report";
 export { chatSignals, topicShares } from "./signals";
 
 export function analyzeExport(bytes: Uint8Array, now = new Date()): Payload {
