@@ -114,7 +114,6 @@ export function useLoad<T>(load: () => Promise<T>, deps: unknown[]) {
     return () => {
       cancel = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
   return { data, error, loading, reload: () => setData(null) };
 }

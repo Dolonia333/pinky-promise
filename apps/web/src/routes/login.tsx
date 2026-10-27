@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { GROK_PROVIDERS, authClient, signIn } from "@/lib/auth/client";
+import { authClient, githubSignInEnabled, signInWithGitHub } from "@/lib/auth/client";
 import { Wordmark } from "@/components/pinky-ui";
 
 export const Route = createFileRoute("/login")({ component: Login });
@@ -34,19 +34,24 @@ function Login() {
     <main className="mx-auto flex min-h-screen max-w-md flex-col px-4 py-8">
       <Wordmark />
       <h1 className="mt-10 font-display text-4xl italic">Sign in to keep your profile.</h1>
-      <p className="mt-3 text-sm text-dust">GitHub is the main sign-in. Email is the backup.</p>
-      <div className="mt-8 space-y-2">
-        {GROK_PROVIDERS.map((provider) => (
+      {githubSignInEnabled ? (
+        <>
+          <p className="mt-3 text-sm text-dust">GitHub is the main sign-in. Email is the backup.</p>
           <button
-            key={provider.providerId}
             type="button"
-            className={`min-h-11 w-full rounded-full text-sm ${provider.providerId === "grok-github" ? "bg-seal font-medium text-seal-ink" : "border border-line text-cream"}`}
-            onClick={() => signIn(provider.providerId, { callbackURL: "/studio" })}
+            className="mt-8 min-h-11 w-full rounded-full bg-seal text-sm font-medium text-seal-ink"
+            onClick={async () => {
+              setError("");
+              const failure = await signInWithGitHub("/studio");
+              if (failure) setError(failure);
+            }}
           >
-            Continue with {provider.label}
+            Continue with GitHub
           </button>
-        ))}
-      </div>
+        </>
+      ) : (
+        <p className="mt-3 text-sm text-dust">Use your email to keep your profile and reports.</p>
+      )}
       <form onSubmit={onSubmit} className="mt-8 space-y-3">
         {mode === "up" ? (
           <label className="block text-sm">

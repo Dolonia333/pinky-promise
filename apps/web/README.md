@@ -29,7 +29,27 @@ The command uses `id` or `url`. A bad payload is `400`. A missing, used, or expi
 
 `POST /upload-codes` (signed in) returns `{ "code": "PP-7F3K", "expiresAt": "..." }` with status `201`.
 
-Run it from this repo with `npm run dev --workspace @pinky-promise/web` after copying `.env.example` to `.env`.
+## Running it
+
+```bash
+npm install
+npm run dev --workspace @pinky-promise/web
+```
+
+With no `.env`, the app runs on a built-in local database that resets on restart, and email sign-in works. Copy `.env.example` to `.env` to use a real database:
+
+| Variable               | What it is                                                                               |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| `DATABASE_URL`         | Postgres connection string. The Supabase transaction pooler link works.                  |
+| `BETTER_AUTH_SECRET`   | Random string that signs sessions. Required with a real database: `openssl rand -hex 32` |
+| `BETTER_AUTH_URL`      | The site's public address, like `https://pinkypromise.example`                           |
+| `GITHUB_CLIENT_ID`     | From a GitHub OAuth app (GitHub settings, Developer settings, OAuth Apps)                |
+| `GITHUB_CLIENT_SECRET` | From the same OAuth app                                                                  |
+| `VITE_GITHUB_SIGN_IN`  | `true` to show "Continue with GitHub"                                                    |
+
+The GitHub OAuth app's callback URL is `<BETTER_AUTH_URL>/api/auth/callback/github`.
+
+Apply migrations to a real database with `npm run db:migrate --workspace @pinky-promise/web`.
 
 ## What is in here
 

@@ -14,6 +14,17 @@ Your web code now uses `packages/shared` as the one source for the upload format
 
 **Still needed from you:** the files the app imports that aren't in the repo (`src/lib/db`, `src/lib/auth/*`, the router and root route, the Vite config, `migrations/0001`, and the dependencies in `apps/web/package.json`). Until those are pushed, the app can't run from a fresh clone.
 
+## Cleaned up after your second merge
+
+- The `@/` imports now resolve in `vite.config.ts`, so the app starts from a fresh clone.
+- Sign-in no longer goes through Grok's auth broker, and its preview client secret is out of the code. It uses Better Auth's built-in GitHub sign-in plus email. GitHub turns on when `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and `VITE_GITHUB_SIGN_IN=true` are set. See `apps/web/README.md`.
+- The sandbox-only files (preview bridge, popup sign-in, gate sessions, path prefix) are gone, and template comments are removed.
+- `BETTER_AUTH_SECRET` is required whenever `DATABASE_URL` is set.
+- `routeTree.gen.ts` is excluded from the format check because the router regenerates it.
+- `.npmrc` is removed. A clean install works without it.
+
+Tested end to end: sign up, get an upload code, upload from the command, see the profile, and code reuse refused.
+
 ## Where things stand
 
 | Done (Shawnaya)                                                       | Where                  |

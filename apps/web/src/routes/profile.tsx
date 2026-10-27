@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { plural } from "@pinky-promise/shared";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Areas, Card, Hours, Note, ScoreBars, Shell } from "@/components/pinky-ui";
 import { getStudio, rateProfile } from "@/lib/pinky/fns";
@@ -79,7 +80,8 @@ function ProfilePage() {
               <Hours hours={profile.signals.activeHours} />
             </div>
             <p className="mt-3 text-xs text-dust">
-              {profile.counts.sessions} sessions · {profile.counts.commits} commits · {profile.counts.repos} repos
+              {plural(profile.counts.sessions, "session")} · {plural(profile.counts.commits, "commit")} ·{" "}
+              {plural(profile.counts.repos, "repo")}
               {profile.uploadCount > 1 ? ` · ${profile.uploadCount} uploads combined` : ""}
             </p>
           </Card>
