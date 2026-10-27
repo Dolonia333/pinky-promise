@@ -29,13 +29,13 @@ Tested end to end: sign up, get an upload code, upload from the command, see the
 
 ## Where things stand
 
-| Done (Shawnaya)                                                       | Where                  |
-| --------------------------------------------------------------------- | ---------------------- |
-| `analyze` command with preview, yes prompt, upload code, and upload   | `packages/cli`         |
-| Payload schema, scoring rubric, confidence labels                     | `packages/shared`      |
-| Archetypes, "co-founder you need," "how to work with me," pair report | `packages/shared`      |
-| Sample payloads to build against                                      | `packages/shared`      |
-| Empty folders for your work                                           | `apps/api`, `apps/web` |
+| Done (Shawnaya)                                                       | Where             |
+| --------------------------------------------------------------------- | ----------------- |
+| `analyze` command with preview, yes prompt, upload code, and upload   | `packages/cli`    |
+| Payload schema, scoring rubric, confidence labels                     | `packages/shared` |
+| Archetypes, "co-founder you need," "how to work with me," pair report | `packages/shared` |
+| Sample payloads to build against                                      | `packages/shared` |
+| Empty folder for your work                                            | `apps/web`        |
 
 Run `npm install && npm test` once to make sure everything works on your machine.
 

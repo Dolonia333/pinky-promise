@@ -86,7 +86,7 @@ Once the API is deployed, run the command with `--api <url>` or set `PINKY_PROMI
 | Z3   | Deploy, CI running `npm run typecheck` and `npm test` | Tue afternoon  |
 | Z4   | Sign in, get upload code, profile page                | Tue 6 PM check |
 
-Build `apps/api` and `apps/web` in their folders; both are already listed as workspaces.
+The website and its API both live in `apps/web`.
 
 ## Next for Shawnaya
 

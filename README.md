@@ -14,16 +14,15 @@ Built at the AITX & MLOps World Community Hackathon, Austin Tech Week 2026, by S
 npx pinky-promise-cli analyze --dry-run
 ```
 
-Until the package is published, run it from source:
+You need Node 20 or newer and git. `--dry-run` shows everything and uploads nothing. Run it only on your own machine and your own projects, never on employer code or a work laptop.
 
-```bash
-git clone https://github.com/naya-ai/pinky-promise.git
-cd pinky-promise
-npm install
-npm run analyze -- --all --dry-run
-```
+## How it works
 
-`--dry-run` shows everything and uploads nothing. Run it only on your own machine and your own projects, never on employer code or a work laptop.
+1. **Sign in** on the website and click "Get upload code." You get a code like `PP-7F3K` that lasts 15 minutes and works once.
+2. **Run the command** from your projects folder. It reads your history locally, prints your profile, and shows the exact numbers it would send.
+3. **Type `yes` and paste the code.** Only those numbers are uploaded, and the server recalculates the scores itself.
+4. **See your profile:** your archetype, five scores with confidence labels, the co-founder you need, and how to work with you.
+5. **Invite someone.** When they accept, you both get the same pair report. Founders without coding history take a 15-minute challenge in the browser that scores the same five dimensions.
 
 ## What leaves your machine
 
@@ -76,25 +75,36 @@ pinky-promise-cli analyze [options]
   --api <url>        API address (or set PINKY_PROMISE_API_URL)
 ```
 
+## Built with
+
+TypeScript throughout. The command is plain Node with no install step, bundled with tsup. The website uses TanStack Start and React, with Better Auth for GitHub and email sign-in and Postgres on Supabase for storage. Tests run on Vitest, and GitHub Actions checks every pull request.
+
 ## Project layout
 
 ```
 packages/cli       The analyze command: git and Claude Code readers, signals, preview, upload
-packages/shared    Payload contract, scoring rubric, archetypes, profile and pair report text
-apps/api           API for upload codes, profiles, and pair reports
-apps/web           Web app for profiles, invites, and pair reports
+packages/shared    Upload format, scoring rubric, archetypes, profile and pair report text
+apps/web           Website and API: sign-in, upload codes, profiles, invites, pair reports, challenge, program view
+docs               Team notes and checklists
 ```
+
+The command and the website share `packages/shared`, so the terminal and the website always describe a person the same way.
 
 ## Development
 
 ```bash
 npm install
-npm test            # unit and end-to-end tests
+npm test             # unit and end-to-end tests
 npm run typecheck
-npm run build       # bundles the command into packages/cli/dist
+npm run lint         # format check
+npm run build        # bundles the command into packages/cli/dist
+npm run analyze -- --all --dry-run              # run the command from source
+npm run dev --workspace @pinky-promise/web      # run the website on localhost:8080
 ```
 
-`packages/shared/sample-payload.json` is a sample upload for building the API and web app without running the analyzer.
+The website runs with no setup on a built-in local database. To use a real database and GitHub sign-in, copy `.env.example` to `.env`; [`apps/web/README.md`](apps/web/README.md) explains each setting.
+
+`packages/shared/sample-payload.json` is a sample upload for testing the website without running the command.
 
 ## License
 
