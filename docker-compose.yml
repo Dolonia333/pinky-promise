@@ -1,0 +1,17 @@
+# Pinky Promise on Synology Container Manager (or any Docker host).
+# Public URL via Cloudflare Tunnel: https://pinkypromise.dolonia.cloud
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: pinky-promise-web:local
+    container_name: pinky-promise-web
+    restart: unless-stopped
+    ports:
+      - "3081:3000"
+    env_file:
+      - .env.docker
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "3000"

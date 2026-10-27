@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+.git
+.output
+**/.output
+dist
+**/dist
+coverage
+.env
+.env.*
+!.env.example
+!.env.docker.example
+apps/web/.env
+**/*.md
+agent-transcripts
+.cursor
+*.log
