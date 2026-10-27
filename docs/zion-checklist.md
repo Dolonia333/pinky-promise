@@ -45,6 +45,18 @@ Tick items as you finish them, in your pull request or right here on GitHub. The
 - [ ] **B3** 6 PM: full demo twice in a row, then feature freeze (both)
 - [ ] **B4** Record the backup video (both)
 
+## AI history upload (new Tuesday)
+
+Business founders drop their ChatGPT or Claude export on the site and get the same profile as the command gives builders. The reader is in `packages/history`; your part is the screen.
+
+- [ ] **H3** "Upload your AI history" screen: pick the file, run `analyzeExport(bytes)` from `@pinky-promise/history` in the browser, show the exact numbers, and upload only after the person approves
+  - [ ] The file never leaves the browser. Only the payload is sent
+  - [ ] Save these profiles with background `business` so the wording fits
+  - [ ] Show the `ExportError` message when the file isn't an export
+  - [ ] Show `signals.topics` (customers, product, sales, and so on) where builders see frontend and backend
+- [ ] **H4** Landing and studio pages point each person to one way in: the command if they code, AI history if they use ChatGPT or Claude, the challenge if neither
+- [ ] **H5** Try it on at least 3 real exports and collect "does this sound like you?" ratings (both)
+
 ## Thursday, Oct 29
 
 - [ ] **Z9** Measure analyzer speed, report time, and matching time for 100 people, and add the numbers to the README
