@@ -25,9 +25,11 @@ Success:
 { "id": "<uuid>", "url": "https://host/profile", "profileId": "<uuid>", "path": "/profile" }
 ```
 
-The command uses `id` or `url`. Errors: `400` bad shape, `404` unknown code, `409` already used, `410` expired, `413` over 50kb.
+The command uses `id` or `url`. A bad payload is `400`. A missing, used, or expired code is `401`. A payload over 50kb is `413`.
 
-Until `npx pinky-promise-cli` is on npm, the studio can paste the JSON from `npm run analyze -- --json`.
+`POST /upload-codes` (signed in) returns `{ "code": "PP-7F3K", "expiresAt": "..." }` with status `201`.
+
+Run it from this repo with `npm run dev --workspace @pinky-promise/web` after copying `.env.example` to `.env`.
 
 ## What is in here
 

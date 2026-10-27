@@ -56,7 +56,12 @@ export function Shell({ children, wide = false }: { children: ReactNode; wide?: 
     <div className="min-h-screen bg-ink pb-24">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-ink/90 px-4 py-3 backdrop-blur">
         <Wordmark />
-        <UserButton />
+        <div className="flex items-center gap-4">
+          <Link to="/settings" className="text-sm text-dust">
+            Feedback
+          </Link>
+          <UserButton />
+        </div>
       </header>
       <main className={`mx-auto w-full px-4 pt-5 ${wide ? "max-w-3xl" : "max-w-xl"}`}>{children}</main>
       <nav

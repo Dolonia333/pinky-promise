@@ -189,9 +189,9 @@ export async function redeemCode(
     const rows = await sql.query<{ used_at: unknown }>(`select used_at from upload_codes where code = $1`, [
       normalized,
     ]);
-    if (!rows[0]) return { ok: false, status: 404, error: "That code doesn't exist." };
-    if (rows[0].used_at) return { ok: false, status: 409, error: "That code was already used." };
-    return { ok: false, status: 410, error: "That code expired. Get a new one." };
+    if (!rows[0]) return { ok: false, status: 401, error: "That code doesn't exist." };
+    if (rows[0].used_at) return { ok: false, status: 401, error: "That code was already used." };
+    return { ok: false, status: 401, error: "That code expired. Get a new one." };
   }
 
   const profileId = await insertPayload(owner.user_id, payload, "technical", false);

@@ -9,7 +9,7 @@
   "scripts": {
     "analyze": "tsx packages/cli/src/index.ts analyze",
     "build": "npm run build --workspace pinky-promise-cli",
-    "typecheck": "tsc -p packages/shared && tsc -p packages/cli",
+    "typecheck": "tsc -p packages/shared && tsc -p packages/cli && npm run typecheck --workspace @pinky-promise/web",
     "test": "vitest run",
     "format": "prettier --write .",
     "lint": "prettier --check ."
