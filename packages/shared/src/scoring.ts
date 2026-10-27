@@ -21,22 +21,33 @@ function blend(parts: Part[]): number | null {
 }
 
 export function scoreSignals(signals: Signals): Scores {
+  const chat = signals.chat;
   return {
     planning: blend([
       [scale(signals.planBeforeCodeRate, 0, 0.6), 0.8],
       [scale(signals.exploreBeforeEditRate, 0, 0.9), 0.2],
+      [scale(chat?.planFirstRate ?? null, 0, 0.5), 0.8],
     ]),
     quality: blend([
       [scale(signals.testRunsPerSession, 0, 3), 0.35],
       [scale(signals.testFixRate, 0, 1), 0.35],
       [scale(signals.testCommitShare, 0, 0.35), 0.3],
+      [scale(chat?.verifyRate ?? null, 0, 0.4), 0.7],
+      [scale(chat?.revisionsPerConversation ?? null, 0, 3), 0.3],
     ]),
     pace: blend([
       [scale(signals.commitsPerActiveDay, 0.5, 5), 0.6],
       [scale(signals.medianCommitLines, 400, 20), 0.4],
+      [scale(chat?.conversationsPerActiveDay ?? null, 0.5, 4), 0.6],
     ]),
-    exploration: blend([[scale(signals.exploreBeforeEditRate, 0, 0.9), 1]]),
-    steering: blend([[scale(signals.agentRejectRate, 0, 0.25), 1]]),
+    exploration: blend([
+      [scale(signals.exploreBeforeEditRate, 0, 0.9), 1],
+      [scale(chat?.researchFirstRate ?? null, 0, 0.6), 1],
+    ]),
+    steering: blend([
+      [scale(signals.agentRejectRate, 0, 0.25), 1],
+      [scale(chat?.pushbackRate ?? null, 0, 0.25), 1],
+    ]),
   };
 }
 
@@ -46,14 +57,17 @@ function level(amount: number, strong: number, medium: number): Confidence {
   return "weak";
 }
 
+const sessionsOf = (counts: Counts) => counts.sessions + (counts.conversations ?? 0);
+
 const EVIDENCE: Record<Dimension, (counts: Counts) => Confidence> = {
-  planning: (counts) => level(counts.sessions, 30, 8),
-  exploration: (counts) => level(counts.sessions, 30, 8),
-  steering: (counts) => level(counts.sessions, 30, 8),
-  pace: (counts) => level(counts.commits, 150, 40),
+  planning: (counts) => level(sessionsOf(counts), 30, 8),
+  exploration: (counts) => level(sessionsOf(counts), 30, 8),
+  steering: (counts) => level(sessionsOf(counts), 30, 8),
+  pace: (counts) => level(Math.max(counts.commits, counts.conversations ?? 0), 150, 40),
   quality: (counts) => {
-    if (counts.sessions >= 30 && counts.commits >= 100) return "strong";
-    if (counts.sessions >= 8 || counts.commits >= 50) return "medium";
+    const sessions = sessionsOf(counts);
+    if ((sessions >= 30 && counts.commits >= 100) || (counts.conversations ?? 0) >= 60) return "strong";
+    if (sessions >= 8 || counts.commits >= 50) return "medium";
     return "weak";
   },
 };

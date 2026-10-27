@@ -76,3 +76,11 @@ describe("howToWorkWithMe", () => {
     expect(tips.at(-1)).toMatch(/most active around/);
   });
 });
+
+describe("profiles without coding areas", () => {
+  it("doesn't ask for a partner to own every area just because there is no code", () => {
+    const need = cofounderYouNeed(withScores({ planning: 80, quality: 30, pace: 50, exploration: 50, steering: 50 }));
+    expect(need.coverAreas).toEqual([]);
+    expect(need.summary).not.toContain("owns");
+  });
+});

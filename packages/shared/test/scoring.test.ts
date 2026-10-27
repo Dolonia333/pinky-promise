@@ -76,3 +76,38 @@ describe("confidenceFor", () => {
     });
   });
 });
+
+describe("AI history signals", () => {
+  const chatOnly: Signals = {
+    ...empty,
+    chat: {
+      conversations: 120,
+      planFirstRate: 0.5,
+      researchFirstRate: 0.6,
+      verifyRate: 0.2,
+      pushbackRate: 0.25,
+      revisionsPerConversation: 1.5,
+      conversationsPerActiveDay: 4,
+    },
+  };
+
+  it("scores every dimension from chat history alone", () => {
+    expect(scoreSignals(chatOnly)).toEqual({ planning: 100, quality: 50, pace: 100, exploration: 100, steering: 100 });
+  });
+
+  it("averages chat history with coding evidence", () => {
+    const both = scoreSignals({ ...chatOnly, agentRejectRate: 0 });
+    expect(both.steering).toBe(50);
+  });
+
+  it("counts conversations as evidence", () => {
+    const scores = scoreSignals(chatOnly);
+    expect(confidenceFor(scores, { repos: 0, commits: 0, sessions: 0, conversations: 120 })).toEqual({
+      planning: "strong",
+      quality: "strong",
+      pace: "medium",
+      exploration: "strong",
+      steering: "strong",
+    });
+  });
+});

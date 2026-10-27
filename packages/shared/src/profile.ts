@@ -44,6 +44,7 @@ export function strongAreas(payload: ProfileLike, threshold = 0.3): Area[] {
 }
 
 export function missingAreas(payload: ProfileLike, threshold = 0.1): Area[] {
+  if (Object.keys(payload.signals.areas).length === 0) return [];
   return AREAS.filter((area) => (payload.signals.areas[area] ?? 0) < threshold);
 }
 

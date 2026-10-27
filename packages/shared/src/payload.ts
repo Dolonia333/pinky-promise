@@ -7,6 +7,31 @@ const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const score = z.number().int().min(0).max(100).nullable();
 const confidence = z.enum(CONFIDENCE_LEVELS);
 
+export const chatSchema = z
+  .object({
+    conversations: count,
+    planFirstRate: rate.nullable(),
+    researchFirstRate: rate.nullable(),
+    verifyRate: rate.nullable(),
+    pushbackRate: rate.nullable(),
+    revisionsPerConversation: z.number().min(0).nullable(),
+    conversationsPerActiveDay: z.number().min(0).nullable(),
+  })
+  .strict();
+
+export const topicsSchema = z
+  .object({
+    customers: rate.optional(),
+    product: rate.optional(),
+    sales: rate.optional(),
+    marketing: rate.optional(),
+    fundraising: rate.optional(),
+    finance: rate.optional(),
+    hiring: rate.optional(),
+    operations: rate.optional(),
+  })
+  .strict();
+
 export const signalsSchema = z
   .object({
     testRunsPerSession: z.number().min(0).nullable(),
@@ -26,6 +51,8 @@ export const signalsSchema = z
         data: rate.optional(),
       })
       .strict(),
+    chat: chatSchema.optional(),
+    topics: topicsSchema.optional(),
     sharedRepos: z
       .object({
         count,
@@ -37,7 +64,9 @@ export const signalsSchema = z
   })
   .strict();
 
-export const countsSchema = z.object({ repos: count, commits: count, sessions: count }).strict();
+export const countsSchema = z
+  .object({ repos: count, commits: count, sessions: count, conversations: count.optional() })
+  .strict();
 
 export const scoresSchema = z
   .object({ planning: score, quality: score, pace: score, exploration: score, steering: score })
@@ -67,6 +96,8 @@ export const payloadSchema = z
 
 export type Signals = z.infer<typeof signalsSchema>;
 export type Counts = z.infer<typeof countsSchema>;
+export type ChatSignals = z.infer<typeof chatSchema>;
+export type Topics = z.infer<typeof topicsSchema>;
 export type Scores = z.infer<typeof scoresSchema>;
 export type ConfidenceMap = z.infer<typeof confidenceSchema>;
 export type Payload = z.infer<typeof payloadSchema>;
