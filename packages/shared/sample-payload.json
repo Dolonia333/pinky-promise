@@ -1,0 +1,50 @@
+{
+  "analyzerVersion": "0.1.0",
+  "sources": ["git", "claude_code"],
+  "window": {
+    "from": "2025-10-27",
+    "to": "2026-10-26"
+  },
+  "counts": {
+    "repos": 9,
+    "commits": 812,
+    "sessions": 214
+  },
+  "signals": {
+    "testRunsPerSession": 2.4,
+    "testFixRate": 0.71,
+    "exploreBeforeEditRate": 0.62,
+    "planBeforeCodeRate": 0.35,
+    "agentRejectRate": 0.12,
+    "medianCommitLines": 48,
+    "commitsPerActiveDay": 3.1,
+    "testCommitShare": 0.22,
+    "activeHours": [0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 8, 9, 7, 8, 9, 7, 5, 4, 3, 5, 6, 4, 2, 1],
+    "areas": {
+      "frontend": 0.4,
+      "backend": 0.35,
+      "infra": 0.15,
+      "data": 0.1
+    },
+    "sharedRepos": {
+      "count": 3,
+      "separateAreasRate": 0.7,
+      "buildsOnOthersRate": 0.3,
+      "coAuthoredRate": 0.05
+    }
+  },
+  "scores": {
+    "planning": 60,
+    "quality": 72,
+    "pace": 72,
+    "exploration": 69,
+    "steering": 48
+  },
+  "confidence": {
+    "planning": "strong",
+    "quality": "strong",
+    "pace": "strong",
+    "exploration": "strong",
+    "steering": "strong"
+  }
+}
