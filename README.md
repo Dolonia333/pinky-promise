@@ -106,6 +106,18 @@ The website runs with no setup on a built-in local database. To use a real datab
 
 `packages/shared/sample-payload.json` is a sample upload for testing the website without running the command.
 
+## Speed (100 people)
+
+Measured on a laptop with `node scripts/bench-room.mjs` (2026-10-27):
+
+| Step                              | Time  |
+| --------------------------------- | ----- |
+| Pairwise fit scores (4,950 edges) | ~4 ms |
+| Best-set room matching (50 pairs) | ~9 ms |
+| Top 5 matches for one founder     | ~1 ms |
+
+Report text for a single pair stays under a millisecond in unit tests. The analyzer command's wall time is dominated by reading local git and session files, not by scoring.
+
 ## License
 
 MIT

@@ -186,6 +186,14 @@ function Studio() {
               </Link>
             </li>
           </ul>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link to="/apply" className="text-seal">
+              Attach profile to an application
+            </Link>
+            <Link to="/qr" className="text-seal">
+              QR + short link
+            </Link>
+          </div>
         </Card>
       </div>
     </Shell>

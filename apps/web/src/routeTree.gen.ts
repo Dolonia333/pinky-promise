@@ -10,13 +10,16 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as ChallengeRouteImport } from './routes/challenge'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as GoRouteImport } from './routes/go'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as ProgramRouteImport } from './routes/program'
+import { Route as QrRouteImport } from './routes/qr'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as TypesRouteImport } from './routes/types'
@@ -36,6 +39,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChallengeRoute = ChallengeRouteImport.update({
   id: '/challenge',
   path: '/challenge',
@@ -44,6 +52,11 @@ const ChallengeRoute = ChallengeRouteImport.update({
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GoRoute = GoRouteImport.update({
+  id: '/go',
+  path: '/go',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
@@ -69,6 +82,11 @@ const ProfilesRoute = ProfilesRouteImport.update({
 const ProgramRoute = ProgramRouteImport.update({
   id: '/program',
   path: '/program',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrRoute = QrRouteImport.update({
+  id: '/qr',
+  path: '/qr',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -139,13 +157,16 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/challenge': typeof ChallengeRouteWithChildren
   '/compare': typeof CompareRoute
+  '/go': typeof GoRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/profiles': typeof ProfilesRoute
   '/program': typeof ProgramRoute
+  '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
   '/studio': typeof StudioRoute
   '/types': typeof TypesRouteWithChildren
@@ -162,12 +183,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/compare': typeof CompareRoute
+  '/go': typeof GoRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/profiles': typeof ProfilesRoute
   '/program': typeof ProgramRoute
+  '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
   '/studio': typeof StudioRoute
   '/upload-codes': typeof UploadCodesRoute
@@ -184,13 +208,16 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/challenge': typeof ChallengeRouteWithChildren
   '/compare': typeof CompareRoute
+  '/go': typeof GoRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/profiles': typeof ProfilesRoute
   '/program': typeof ProgramRoute
+  '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
   '/studio': typeof StudioRoute
   '/types': typeof TypesRouteWithChildren
@@ -209,13 +236,16 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/apply'
     | '/challenge'
     | '/compare'
+    | '/go'
     | '/history'
     | '/login'
     | '/profile'
     | '/profiles'
     | '/program'
+    | '/qr'
     | '/settings'
     | '/studio'
     | '/types'
@@ -232,12 +262,15 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/apply'
     | '/compare'
+    | '/go'
     | '/history'
     | '/login'
     | '/profile'
     | '/profiles'
     | '/program'
+    | '/qr'
     | '/settings'
     | '/studio'
     | '/upload-codes'
@@ -253,13 +286,16 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/apply'
     | '/challenge'
     | '/compare'
+    | '/go'
     | '/history'
     | '/login'
     | '/profile'
     | '/profiles'
     | '/program'
+    | '/qr'
     | '/settings'
     | '/studio'
     | '/types'
@@ -277,13 +313,16 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApplyRoute: typeof ApplyRoute
   ChallengeRoute: typeof ChallengeRouteWithChildren
   CompareRoute: typeof CompareRoute
+  GoRoute: typeof GoRoute
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   ProfilesRoute: typeof ProfilesRoute
   ProgramRoute: typeof ProgramRoute
+  QrRoute: typeof QrRoute
   SettingsRoute: typeof SettingsRoute
   StudioRoute: typeof StudioRoute
   TypesRoute: typeof TypesRouteWithChildren
@@ -304,6 +343,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/challenge': {
       id: '/challenge'
       path: '/challenge'
@@ -316,6 +362,13 @@ declare module '@tanstack/react-router' {
       path: '/compare'
       fullPath: '/compare'
       preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/go': {
+      id: '/go'
+      path: '/go'
+      fullPath: '/go'
+      preLoaderRoute: typeof GoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/history': {
@@ -351,6 +404,13 @@ declare module '@tanstack/react-router' {
       path: '/program'
       fullPath: '/program'
       preLoaderRoute: typeof ProgramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr': {
+      id: '/qr'
+      path: '/qr'
+      fullPath: '/qr'
+      preLoaderRoute: typeof QrRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -475,13 +535,16 @@ const TypesRouteWithChildren = TypesRoute._addFileChildren(TypesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApplyRoute: ApplyRoute,
   ChallengeRoute: ChallengeRouteWithChildren,
   CompareRoute: CompareRoute,
+  GoRoute: GoRoute,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   ProfilesRoute: ProfilesRoute,
   ProgramRoute: ProgramRoute,
+  QrRoute: QrRoute,
   SettingsRoute: SettingsRoute,
   StudioRoute: StudioRoute,
   TypesRoute: TypesRouteWithChildren,

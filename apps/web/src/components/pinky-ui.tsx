@@ -3,6 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Check, Copy, House, Timer, UserRound, Users } from "lucide-react";
 import { RedirectToSignIn, UserButton } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { FeedbackDock } from "@/components/feedback-dock";
 import {
   AREA_KEYS,
   SCORE_KEYS,
@@ -83,6 +84,7 @@ export function Shell({
         </div>
       </header>
       <main className={`mx-auto w-full px-4 pt-5 ${wide ? "max-w-3xl" : "max-w-xl"}`}>{children}</main>
+      <FeedbackDock />
       <nav
         className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-ink/95 backdrop-blur"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}

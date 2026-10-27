@@ -291,29 +291,95 @@ export function scoreFit(
 export type RoomPair = { a: string; b: string; note: string };
 export type RoomRound = { pairs: RoomPair[]; bye: string | null };
 
-export function matchRoom(people: CohortPerson[]): RoomRound {
+/** Greedy maximum-weight matching seed (sort edges, take first free). */
+function greedyMatching(people: CohortPerson[], skip: number | null): { pairs: [number, number][]; score: number } {
   const edges: { i: number; j: number; s: number }[] = [];
   for (let i = 0; i < people.length; i += 1) {
+    if (i === skip) continue;
     for (let j = i + 1; j < people.length; j += 1) {
-      edges.push({ i, j, s: scoreFit(people[i], people[j]) });
+      if (j === skip) continue;
+      edges.push({ i, j, s: scoreFit(people[i]!, people[j]!) });
     }
   }
   edges.sort((a, b) => b.s - a.s);
   const used = new Set<number>();
-  const pairs: RoomPair[] = [];
+  const pairs: [number, number][] = [];
+  let score = 0;
   for (const edge of edges) {
     if (used.has(edge.i) || used.has(edge.j)) continue;
     used.add(edge.i);
     used.add(edge.j);
-    const left = people[edge.i];
-    const right = people[edge.j];
+    pairs.push([edge.i, edge.j]);
+    score += edge.s;
+  }
+  return { pairs, score };
+}
+
+/** Improve a matching by 2-opt pair swaps until no gain. */
+function improveMatching(
+  people: CohortPerson[],
+  pairs: [number, number][],
+): { pairs: [number, number][]; score: number } {
+  const next = pairs.map(([a, b]) => [a, b] as [number, number]);
+  let score = next.reduce((sum, [a, b]) => sum + scoreFit(people[a]!, people[b]!), 0);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (let i = 0; i < next.length; i += 1) {
+      for (let j = i + 1; j < next.length; j += 1) {
+        const [a, b] = next[i]!;
+        const [c, d] = next[j]!;
+        const current = scoreFit(people[a]!, people[b]!) + scoreFit(people[c]!, people[d]!);
+        const option1 = scoreFit(people[a]!, people[c]!) + scoreFit(people[b]!, people[d]!);
+        const option2 = scoreFit(people[a]!, people[d]!) + scoreFit(people[b]!, people[c]!);
+        if (option1 > current && option1 >= option2) {
+          next[i] = [a, c];
+          next[j] = [b, d];
+          score += option1 - current;
+          changed = true;
+        } else if (option2 > current) {
+          next[i] = [a, d];
+          next[j] = [b, c];
+          score += option2 - current;
+          changed = true;
+        }
+      }
+    }
+  }
+  return { pairs: next, score };
+}
+
+/**
+ * Best set of pairs for the room: try each odd-person-out (bye), seed with greedy,
+ * then locally improve. Beats plain greedy when a strong early edge blocks two better ones.
+ */
+export function matchRoom(people: CohortPerson[]): RoomRound {
+  if (people.length < 2) return { pairs: [], bye: people[0]?.displayName ?? null };
+
+  const byeCandidates: Array<number | null> = people.length % 2 === 0 ? [null] : people.map((_, index) => index);
+
+  let best: { pairs: [number, number][]; score: number; bye: number | null } | null = null;
+  for (const bye of byeCandidates) {
+    const seed = greedyMatching(people, bye);
+    const improved = improveMatching(people, seed.pairs);
+    if (!best || improved.score > best.score) {
+      best = { pairs: improved.pairs, score: improved.score, bye };
+    }
+  }
+
+  const chosen = best!;
+  const pairs: RoomPair[] = chosen.pairs.map(([i, j]) => {
+    const left = people[i]!;
+    const right = people[j]!;
     const report = pairReport(left, right);
-    pairs.push({
+    return {
       a: left.displayName,
       b: right.displayName,
       note: report.archetype.name === "Mirror Match" ? "Too alike to learn much" : report.archetype.name,
-    });
-  }
-  const byeIndex = people.findIndex((_, i) => !used.has(i));
-  return { pairs, bye: byeIndex >= 0 ? people[byeIndex].displayName : null };
+    };
+  });
+  return {
+    pairs,
+    bye: chosen.bye === null ? null : (people[chosen.bye]?.displayName ?? null),
+  };
 }

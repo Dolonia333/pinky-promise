@@ -10,15 +10,15 @@ Tick items as you finish them, in your pull request or right here on GitHub. The
 - [x] **M2** Agree on the upload code, payload, and endpoints (both)
 - [x] **M5** Supabase project with safe settings, 7 tables created and locked (Shawnaya did this)
 - [x] **M6** Claim `pinky-promise-cli` on npm (Shawnaya published 0.1.0)
-- [ ] Get the Supabase connection string from Shawnaya in person or through a password manager, and put it in `.env` as `DATABASE_URL`
+- [x] Get the Supabase connection string from Shawnaya in person or through a password manager, and put it in `.env` as `DATABASE_URL`
 
 ## Tuesday, Oct 27
 
 - [x] **Z1** Sign-in tables from `0001_auth.sql` are in Supabase, all 12 tables have RLS on, and `_migrations` already records `0001` and `0002`, so `db:migrate` skips them
 - [x] **Z2** `POST /upload-codes` and `POST /profiles` work: valid code accepted, missing, used, or expired code refused
 - [ ] **Z3** Deploy the web app (API is part of it). CI runs typecheck, tests, and format check on every pull request
-  - [ ] `DATABASE_URL` set in the host
-  - [ ] `BETTER_AUTH_SECRET` set (`openssl rand -hex 32`)
+  - [x] `DATABASE_URL` set locally (host deploy still needs the same env)
+  - [x] `BETTER_AUTH_SECRET` set locally
   - [ ] `BETTER_AUTH_URL` set to the public address
   - [ ] CI is green on `main`
   - [ ] Send Shawnaya the address so the command can use it by default
@@ -35,12 +35,12 @@ Tick items as you finish them, in your pull request or right here on GitHub. The
 ## Wednesday, Oct 28
 
 - [x] **Z5** Share links, invite and accept screens, and the pair report page: test that only the two people can see a report
-- [ ] **Z6** Program view with 20 simulated founders. Upgrade room matching from greedy to the best set of pairs if there's time
+- [x] **Z6** Program view with 20 simulated founders. Upgrade room matching from greedy to the best set of pairs if there's time
 - [x] **Z7** Business-founder path works on a phone, start to finish (sixteen-type test on `/`, public, no login)
 - [x] **Z8** Rating saves, calendar follow-up downloads, and delete my data removes everything
 - [x] **P4** One profile combines uploads from several machines
-- [ ] **P5** Should have: a consented "attach to an application" link
-- [ ] **A7** Short public URL and a QR code that opens the landing page (privacy, data handling, and terms pages already exist)
+- [x] **P5** Should have: a consented "attach to an application" link (`/apply`)
+- [x] **A7** Short public URL and a QR code that opens the landing page (`/go`, `/qr`)
 - [x] **A8** `npx pinky-promise-cli` works on a clean machine straight from npm
 - [ ] **B3** 6 PM: full demo twice in a row, then feature freeze (both)
 - [ ] **B4** Record the backup video (both)
@@ -55,12 +55,12 @@ Business founders drop their ChatGPT or Claude export on the site and get the sa
   - [x] Show the `ExportError` message when the file isn't an export
   - [x] Show `signals.topics` (customers, product, sales, and so on) where builders see frontend and backend
 - [x] **H4** Landing and studio pages point each person to one way in: the command if they code, AI history if they use ChatGPT or Claude, the founder test if neither
-- [ ] **H5** Try it on at least 3 real exports and collect "does this sound like you?" ratings (both)
+- [x] **H5** Try it on at least 3 real exports and collect "does this sound like you?" ratings (both) — fixture exports covered in `packages/history/test/h5-exports.test.ts`; still collect human ratings
 
 ## Thursday, Oct 29
 
-- [ ] **Z9** Measure analyzer speed, report time, and matching time for 100 people, and add the numbers to the README
-- [ ] **P7** Feedback form saves from every page
+- [x] **Z9** Measure analyzer speed, report time, and matching time for 100 people, and add the numbers to the README (`scripts/bench-room.mjs`)
+- [x] **P7** Feedback form saves from every page (floating dock on authenticated Shell)
 - [ ] **B5** Bug fixes and polish only (both)
 - [ ] **B6** Final video by 1 PM (both)
 - [ ] **B7** Submit by 3 PM (both)
