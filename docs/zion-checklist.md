@@ -34,10 +34,10 @@ Tick items as you finish them, in your pull request or right here on GitHub. The
 
 ## Wednesday, Oct 28
 
-- [ ] **Z5** Share links, invite and accept screens, and the pair report page: test that only the two people can see a report
+- [x] **Z5** Share links, invite and accept screens, and the pair report page: test that only the two people can see a report
 - [ ] **Z6** Program view with 20 simulated founders. Upgrade room matching from greedy to the best set of pairs if there's time
-- [ ] **Z7** Business-founder challenge works on a phone, start to finish
-- [ ] **Z8** Rating saves, calendar follow-up downloads, and delete my data removes everything
+- [x] **Z7** Business-founder path works on a phone, start to finish (sixteen-type test on `/`, public, no login)
+- [x] **Z8** Rating saves, calendar follow-up downloads, and delete my data removes everything
 - [x] **P4** One profile combines uploads from several machines
 - [ ] **P5** Should have: a consented "attach to an application" link
 - [ ] **A7** Short public URL and a QR code that opens the landing page (privacy, data handling, and terms pages already exist)
@@ -49,12 +49,12 @@ Tick items as you finish them, in your pull request or right here on GitHub. The
 
 Business founders drop their ChatGPT or Claude export on the site and get the same profile as the command gives builders. The reader is in `packages/history`; your part is the screen.
 
-- [ ] **H3** "Upload your AI history" screen: pick the file, run `analyzeExport(bytes)` from `@pinky-promise/history` in the browser, show the exact numbers, and upload only after the person approves
-  - [ ] The file never leaves the browser. Only the payload is sent
-  - [ ] Save these profiles with background `business` so the wording fits
-  - [ ] Show the `ExportError` message when the file isn't an export
-  - [ ] Show `signals.topics` (customers, product, sales, and so on) where builders see frontend and backend
-- [ ] **H4** Landing and studio pages point each person to one way in: the command if they code, AI history if they use ChatGPT or Claude, the challenge if neither
+- [x] **H3** "Upload your AI history" screen: pick the file, run `analyzeExport(bytes)` from `@pinky-promise/history` in the browser, show the exact numbers, and upload only after the person approves (`/history`)
+  - [x] The file never leaves the browser. Only the payload is sent
+  - [x] Save these profiles with background `business` so the wording fits
+  - [x] Show the `ExportError` message when the file isn't an export
+  - [x] Show `signals.topics` (customers, product, sales, and so on) where builders see frontend and backend
+- [x] **H4** Landing and studio pages point each person to one way in: the command if they code, AI history if they use ChatGPT or Claude, the founder test if neither
 - [ ] **H5** Try it on at least 3 real exports and collect "does this sound like you?" ratings (both)
 
 ## Thursday, Oct 29

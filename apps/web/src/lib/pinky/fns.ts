@@ -47,7 +47,7 @@ export const useSampleProfile = createServerFn({ method: "POST" })
 
 export const pastePayload = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator((input: { code: string; json: string }) => input)
+  .validator((input: { code: string; json: string; background?: "technical" | "business" }) => input)
   .handler(async ({ data }) => {
     let body: unknown;
     try {
@@ -55,7 +55,7 @@ export const pastePayload = createServerFn({ method: "POST" })
     } catch {
       return { ok: false as const, status: 400, error: "That isn't JSON." };
     }
-    return redeemCode(data.code, body);
+    return redeemCode(data.code, body, data.background ?? "technical");
   });
 
 export const rateProfile = createServerFn({ method: "POST" })

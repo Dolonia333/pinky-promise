@@ -165,13 +165,27 @@ function Studio() {
         </Card>
 
         <Card>
-          <h2 className="font-display text-2xl">No coding sessions?</h2>
-          <p className="mt-1 text-sm text-dust">
-            Business founders take a 15-minute challenge. Same five dimensions. Actions, not writing polish.
-          </p>
-          <Link to="/challenge" className="mt-3 inline-flex min-h-11 items-center text-sm text-cream">
-            Start the challenge
-          </Link>
+          <h2 className="font-display text-2xl">Pick your way in</h2>
+          <ul className="mt-3 space-y-3 text-sm">
+            <li className="rounded-2xl bg-raised px-3 py-3">
+              <p className="text-cream">You write code</p>
+              <p className="mt-1 text-dust">Run the command above. Git and AI coding sessions stay on your machine.</p>
+            </li>
+            <li className="rounded-2xl bg-raised px-3 py-3">
+              <p className="text-cream">You use ChatGPT or Claude</p>
+              <p className="mt-1 text-dust">Upload an export. The file never leaves the browser.</p>
+              <Link to="/history" className="mt-2 inline-flex min-h-11 items-center text-seal">
+                Upload AI history
+              </Link>
+            </li>
+            <li className="rounded-2xl bg-raised px-3 py-3">
+              <p className="text-cream">Neither — scenes instead</p>
+              <p className="mt-1 text-dust">Twenty-four founder scenes. Sixteen types. No coding history needed.</p>
+              <Link to="/" className="mt-2 inline-flex min-h-11 items-center text-seal">
+                Take the founder test
+              </Link>
+            </li>
+          </ul>
         </Card>
       </div>
     </Shell>

@@ -269,6 +269,18 @@ function Intro({ onStart, savedTypeId }: { onStart: () => void; savedTypeId: str
           </section>
         ))}
       </div>
+      <div className="mt-8 space-y-2 border-t border-line pt-6 text-sm text-dust">
+        <p>Other ways in:</p>
+        <p>
+          <Link to="/studio" className="text-seal">
+            Run the coding command
+          </Link>{" "}
+          ·{" "}
+          <Link to="/history" className="text-seal">
+            Upload ChatGPT / Claude history
+          </Link>
+        </p>
+      </div>
     </section>
   );
 }

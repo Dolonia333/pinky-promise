@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { plural } from "@pinky-promise/shared";
+import { TOPIC_LABELS, plural, type Topic } from "@pinky-promise/shared";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Areas, Card, Hours, Note, ScoreBars, Shell } from "@/components/pinky-ui";
 import { getStudio, rateProfile } from "@/lib/pinky/fns";
@@ -71,9 +71,27 @@ function ProfilePage() {
             </ul>
           </Card>
           <Card>
-            <h2 className="font-display text-2xl">Where the work sits</h2>
+            <h2 className="font-display text-2xl">
+              {profile.background === "business" ? "Where the conversations sit" : "Where the work sits"}
+            </h2>
             <div className="mt-3">
-              <Areas areas={profile.signals.areas} background={profile.background} />
+              {profile.background === "business" && profile.signals.topics ? (
+                <ul className="grid grid-cols-2 gap-2">
+                  {(Object.keys(profile.signals.topics) as Topic[])
+                    .filter((topic) => (profile.signals.topics?.[topic] ?? 0) > 0)
+                    .sort((a, b) => (profile.signals.topics?.[b] ?? 0) - (profile.signals.topics?.[a] ?? 0))
+                    .map((topic) => (
+                      <li key={topic} className="rounded-2xl bg-raised px-3 py-2">
+                        <p className="text-xs uppercase tracking-wide text-dust">{TOPIC_LABELS[topic]}</p>
+                        <p className="font-display text-xl">
+                          {Math.round((profile.signals.topics?.[topic] ?? 0) * 100)}%
+                        </p>
+                      </li>
+                    ))}
+                </ul>
+              ) : (
+                <Areas areas={profile.signals.areas} background={profile.background} />
+              )}
             </div>
             <p className="mt-4 text-xs uppercase tracking-wide text-dust">Hours you were active</p>
             <div className="mt-2">

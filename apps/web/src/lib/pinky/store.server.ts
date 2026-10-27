@@ -165,6 +165,7 @@ export async function activeCode(userId: string): Promise<{ code: string; expire
 export async function redeemCode(
   code: string,
   body: unknown,
+  background: Background = "technical",
 ): Promise<{ ok: true; profileId: string; path: string } | { ok: false; status: number; error: string }> {
   const parsed = payloadSchema.safeParse(body);
   if (!parsed.success) return { ok: false, status: 400, error: "Payload doesn't match the agreed shape." };
@@ -194,7 +195,7 @@ export async function redeemCode(
     return { ok: false, status: 401, error: "That code expired. Get a new one." };
   }
 
-  const profileId = await insertPayload(owner.user_id, payload, "technical", false);
+  const profileId = await insertPayload(owner.user_id, payload, background, false);
   return { ok: true, profileId, path: "/profile" };
 }
 

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChallengeRouteImport } from './routes/challenge'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProfilesRouteImport } from './routes/profiles'
@@ -43,6 +44,11 @@ const ChallengeRoute = ChallengeRouteImport.update({
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -135,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/challenge': typeof ChallengeRouteWithChildren
   '/compare': typeof CompareRoute
+  '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/profiles': typeof ProfilesRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/compare': typeof CompareRoute
+  '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/profiles': typeof ProfilesRoute
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/challenge': typeof ChallengeRouteWithChildren
   '/compare': typeof CompareRoute
+  '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/profiles': typeof ProfilesRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/'
     | '/challenge'
     | '/compare'
+    | '/history'
     | '/login'
     | '/profile'
     | '/profiles'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/compare'
+    | '/history'
     | '/login'
     | '/profile'
     | '/profiles'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/'
     | '/challenge'
     | '/compare'
+    | '/history'
     | '/login'
     | '/profile'
     | '/profiles'
@@ -267,6 +279,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChallengeRoute: typeof ChallengeRouteWithChildren
   CompareRoute: typeof CompareRoute
+  HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   ProfilesRoute: typeof ProfilesRoute
@@ -303,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/compare'
       fullPath: '/compare'
       preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -457,6 +477,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChallengeRoute: ChallengeRouteWithChildren,
   CompareRoute: CompareRoute,
+  HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   ProfilesRoute: ProfilesRoute,
