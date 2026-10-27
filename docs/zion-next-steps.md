@@ -2,6 +2,18 @@
 
 The analyzer command, scoring, and report logic are done and on `main`. Everything below is what's left on the server and web side, in the order it unblocks the demo.
 
+## Synced after your first merge
+
+Your web code now uses `packages/shared` as the one source for the upload format, scoring, and report text, so the terminal and the website always agree. What changed in `apps/web`:
+
+- `payload.ts` and `types.ts` use the shared schema and types. Scores and some signals can be `null`, and areas only list what someone touched. `ScoreBars` shows "Not enough data" and `Areas` shows 0% for missing areas.
+- `fit.ts` wraps the shared archetype, "co-founder you need," tips, and pair report. Your evidence lines, profile merging, and calendar file stay, now safe with missing data. Business founders still read as product, the build, roles, and proof.
+- `redeemCode` recomputes scores with `scoreProfile`, refuses uploads that claim to be challenges, and claims the code in one `update ... returning` so it can't be used twice.
+- `matchRoom` checks for "Mirror Match" instead of "The Echo."
+- Your tests moved to Vitest, so `npm test` runs them with everything else.
+
+**Still needed from you:** the files the app imports that aren't in the repo (`src/lib/db`, `src/lib/auth/*`, the router and root route, the Vite config, `migrations/0001`, and the dependencies in `apps/web/package.json`). Until those are pushed, the app can't run from a fresh clone.
+
 ## Where things stand
 
 | Done (Shawnaya)                                                       | Where                  |

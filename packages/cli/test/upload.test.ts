@@ -15,6 +15,18 @@ beforeAll(async () => {
     request.on("end", () => {
       received = JSON.parse(body);
       const { code } = received as { code: string };
+      if (code === "PP-USED") {
+        response
+          .writeHead(409, { "content-type": "application/json" })
+          .end(JSON.stringify({ error: "That code was already used." }));
+        return;
+      }
+      if (code === "PP-SHAP") {
+        response
+          .writeHead(400, { "content-type": "application/json" })
+          .end(JSON.stringify({ error: "Payload doesn't match the agreed shape." }));
+        return;
+      }
       if (code !== "PP-7F3K") {
         response.writeHead(401).end();
         return;
@@ -36,6 +48,15 @@ describe("uploadProfile", () => {
 
   it("explains an expired code", async () => {
     await expect(uploadProfile(apiUrl, "PP-0000", samplePayload)).rejects.toThrow(/invalid or expired/);
+  });
+
+  it("passes along the server's reason", async () => {
+    await expect(uploadProfile(apiUrl, "PP-USED", samplePayload)).rejects.toThrow(
+      "That code was already used. Get a new code on the website and run this again.",
+    );
+    await expect(uploadProfile(apiUrl, "PP-SHAP", samplePayload)).rejects.toThrow(
+      "Upload failed (400): Payload doesn't match the agreed shape. Nothing was saved.",
+    );
   });
 
   it("explains when the server is unreachable", async () => {
