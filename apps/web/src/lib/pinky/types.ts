@@ -4,6 +4,7 @@ import {
   DIMENSION_LABELS,
   type Area,
   type Confidence,
+  type Counts,
   type Dimension,
   type Scores,
   type Signals,
@@ -25,7 +26,7 @@ export type ProfileInput = {
   demo: boolean;
   sources: string[];
   window: { from: string; to: string } | null;
-  counts: { repos: number; commits: number; sessions: number };
+  counts: Counts;
   signals: Signals;
   scores: Scores;
   confidence: Record<ScoreKey, Confidence>;

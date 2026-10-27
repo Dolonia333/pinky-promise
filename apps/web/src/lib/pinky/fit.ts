@@ -2,9 +2,11 @@ import {
   compareFounders,
   cofounderYouNeed,
   howToWorkWithMe,
+  plural,
   profileArchetype,
   type Confidence,
   type Founder,
+  type Voice,
 } from "@pinky-promise/shared";
 import {
   AREA_KEYS,
@@ -22,7 +24,7 @@ export function pct(n: number | null): string {
 }
 
 function showScore(n: number | null): string {
-  return n === null ? "n/a" : String(n);
+  return n === null ? "No data" : String(n);
 }
 
 export function archetypeOf(scores: Scores): { name: string; line: string } {
@@ -30,12 +32,16 @@ export function archetypeOf(scores: Scores): { name: string; line: string } {
   return { name: archetype.name, line: archetype.tagline };
 }
 
+export function voiceOf(p: ProfileInput): Voice {
+  return p.background === "business" ? "business" : "builder";
+}
+
 export function cofounderNeed(p: ProfileInput): string {
-  return cofounderYouNeed(p, areaLabels(p.background)).summary;
+  return cofounderYouNeed(p, areaLabels(p.background), voiceOf(p)).summary;
 }
 
 export function workWithMe(p: ProfileInput): string[] {
-  const tips = howToWorkWithMe(p);
+  const tips = howToWorkWithMe(p, voiceOf(p));
   return tips.length > 0 ? tips : ["Show them this page. It is evidence for a conversation, not a verdict."];
 }
 
@@ -43,6 +49,47 @@ export function evidenceLines(p: ProfileInput, voice: "you" | "they"): { key: Sc
   const you = voice === "you";
   const challengeOnly =
     p.sources.includes("challenge") && !p.sources.includes("git") && !p.sources.includes("claude_code");
+  const chat = p.signals.chat;
+  const hasCode = p.sources.includes("git") || p.sources.includes("claude_code");
+  if (chat && !hasCode) {
+    const who = you ? "You" : "They";
+    const unknown = "Not enough data yet.";
+    return [
+      {
+        key: "planning",
+        detail:
+          chat.planFirstRate === null
+            ? unknown
+            : `${who} ask for a plan before a draft in ${pct(chat.planFirstRate)} of chats.`,
+      },
+      {
+        key: "quality",
+        detail:
+          chat.verifyRate === null
+            ? unknown
+            : `${who} check sources or numbers in ${pct(chat.verifyRate)} of longer chats.`,
+      },
+      {
+        key: "pace",
+        detail:
+          chat.conversationsPerActiveDay === null
+            ? unknown
+            : `${chat.conversationsPerActiveDay.toFixed(1)} AI conversations on a day ${you ? "you work" : "they work"}.`,
+      },
+      {
+        key: "exploration",
+        detail:
+          chat.researchFirstRate === null
+            ? unknown
+            : `${who} research before drafting in ${pct(chat.researchFirstRate)} of chats.`,
+      },
+      {
+        key: "steering",
+        detail:
+          chat.pushbackRate === null ? unknown : `${who} push back on or redo ${pct(chat.pushbackRate)} of answers.`,
+      },
+    ];
+  }
   if (challengeOnly) {
     return [
       { key: "planning", detail: "From the challenge: what got a card, and what actually got locked." },
@@ -107,13 +154,14 @@ export type PairReport = {
 function evidenceWeight(p: ProfileInput): string {
   if (p.sources.includes("challenge") && p.counts.commits === 0) return "1 challenge";
   const bits = [];
-  if (p.counts.sessions) bits.push(`${p.counts.sessions} sessions`);
-  if (p.counts.commits) bits.push(`${p.counts.commits} commits`);
+  if (p.counts.sessions) bits.push(plural(p.counts.sessions, "session"));
+  if (p.counts.conversations) bits.push(plural(p.counts.conversations, "AI conversation"));
+  if (p.counts.commits) bits.push(plural(p.counts.commits, "commit"));
   return bits.join(" · ") || "thin evidence";
 }
 
 function asFounder(p: ProfileInput): Founder {
-  return { name: p.displayName, payload: p, areaLabels: areaLabels(p.background) };
+  return { name: p.displayName, payload: p, areaLabels: areaLabels(p.background), voice: voiceOf(p) };
 }
 
 export function pairReport(a: ProfileInput, b: ProfileInput): PairReport {
@@ -149,6 +197,11 @@ function wavg(rows: ProfileInput[], weights: number[], pick: (p: ProfileInput) =
 }
 
 const round = (n: number | null, places: number) => (n === null ? null : Math.round(n * 10 ** places) / 10 ** places);
+
+function withChat(rows: ProfileInput[]): Pick<Signals, "chat" | "topics"> {
+  const latest = [...rows].reverse().find((row) => row.signals.chat);
+  return latest ? { chat: latest.signals.chat, topics: latest.signals.topics } : {};
+}
 
 export function mergeProfiles(rows: ProfileInput[]): ProfileInput | null {
   if (rows.length === 0) return null;
@@ -213,6 +266,7 @@ export function mergeProfiles(rows: ProfileInput[]): ProfileInput | null {
       Math.round(wavg(rows, weights, (p) => p.signals.activeHours[h] ?? 0) ?? 0),
     ),
     areas,
+    ...withChat(rows),
     sharedRepos: {
       count: rows.reduce((s, r) => s + r.signals.sharedRepos.count, 0),
       separateAreasRate: round(
@@ -230,6 +284,7 @@ export function mergeProfiles(rows: ProfileInput[]): ProfileInput | null {
     },
   };
   const sessions = rows.reduce((s, r) => s + r.counts.sessions, 0);
+  const conversations = rows.reduce((s, r) => s + (r.counts.conversations ?? 0), 0);
   const commits = rows.reduce((s, r) => s + r.counts.commits, 0);
   const level: Confidence =
     sessions >= 40 || commits >= 150 ? "strong" : sessions >= 5 || sources.includes("challenge") ? "medium" : "weak";
@@ -259,6 +314,7 @@ export function mergeProfiles(rows: ProfileInput[]): ProfileInput | null {
       repos: Math.max(...rows.map((r) => r.counts.repos)),
       commits,
       sessions,
+      ...(conversations > 0 ? { conversations } : {}),
     },
     signals,
     scores,

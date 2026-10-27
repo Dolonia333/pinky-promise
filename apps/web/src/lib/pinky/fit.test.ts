@@ -125,3 +125,48 @@ describe("room matching", () => {
     expect(scoreFit(people[0], people[1])).toBeGreaterThan(0);
   });
 });
+
+describe("business founders on the website", () => {
+  const business = profileFromPayload(
+    {
+      ...gitOnly,
+      sources: ["chatgpt"],
+      counts: { repos: 0, commits: 0, sessions: 0, conversations: 40 },
+      signals: {
+        ...gitOnly.signals,
+        medianCommitLines: null,
+        commitsPerActiveDay: null,
+        testCommitShare: null,
+        areas: {},
+        chat: {
+          conversations: 40,
+          planFirstRate: 0.4,
+          researchFirstRate: 0.5,
+          verifyRate: 0.1,
+          pushbackRate: 0.2,
+          revisionsPerConversation: 1.2,
+          conversationsPerActiveDay: 2.5,
+        },
+        topics: { fundraising: 0.5, customers: 0.5 },
+      },
+    },
+    { ...meta, background: "business" },
+  );
+
+  it("uses business wording and chat evidence", () => {
+    expect(cofounderNeed(business)).not.toMatch(/commit|test|code/i);
+    expect(evidenceLines(business, "you").find((line) => line.key === "pace")?.detail).toBe(
+      "2.5 AI conversations on a day you work.",
+    );
+  });
+
+  it("names AI conversations as evidence in pair reports", () => {
+    expect(pairReport(business, mayaProfile()).confidenceNote).toContain("40 AI conversations");
+  });
+
+  it("keeps chat history when combining uploads", () => {
+    const merged = mergeProfiles([sample, { ...business, createdAt: "2026-10-27T00:00:00.000Z" }]);
+    expect(merged?.signals.chat?.conversations).toBe(40);
+    expect(merged?.counts.conversations).toBe(40);
+  });
+});

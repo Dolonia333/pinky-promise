@@ -51,10 +51,7 @@ function Program() {
             ))}
           </ul>
           <h2 className="mt-8 font-display text-2xl">This round</h2>
-          <Note>
-            {room.roomSize} people. Pairs picked so the room's total fit is as high as a greedy matching can get. Odd
-            person sits out.
-          </Note>
+          <Note>{room.roomSize} people. The strongest matches are paired first, and the odd person sits out.</Note>
           <ul className="mt-3 divide-y divide-line rounded-card border border-line bg-paper">
             {room.round.pairs.map((pair) => (
               <li key={`${pair.a}-${pair.b}`} className="px-4 py-3 text-sm">

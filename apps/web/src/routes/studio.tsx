@@ -72,7 +72,7 @@ function Studio() {
 
   return (
     <Shell>
-      <p className="text-xs uppercase tracking-widest text-seal">Tonight</p>
+      <p className="text-xs uppercase tracking-widest text-seal">Studio</p>
       <h1 className="mt-1 font-display text-4xl italic">Your builder profile</h1>
       <Note>The command stays on your machine. This page only receives the numbers you approve.</Note>
       {error ? <p className="mt-3 text-sm text-seal">{error}</p> : null}
@@ -89,7 +89,7 @@ function Studio() {
           </Link>
         </Card>
       ) : studio ? (
-        <Note>No profile yet. Use a sample so the demo works tonight, paste a payload, or take the challenge.</Note>
+        <Note>No profile yet. Run the command, take the challenge, or load the sample to look around.</Note>
       ) : error ? null : (
         <div className="mt-5 h-28 animate-pulse rounded-card bg-paper" />
       )}
@@ -120,8 +120,7 @@ function Studio() {
         <Card>
           <h2 className="font-display text-2xl">Paste a payload</h2>
           <p className="mt-1 text-sm text-dust">
-            Until the command is published, paste the JSON it would send. It must match the agreed shape, and it needs a
-            live code.
+            Ran the command with --json? Paste what it printed. It has to match the upload format and needs a live code.
           </p>
           <textarea
             value={json}
@@ -148,8 +147,7 @@ function Studio() {
         <Card>
           <h2 className="font-display text-2xl">Sample, clearly labeled</h2>
           <p className="mt-1 text-sm text-dust">
-            The shared test payload from the plan. It is not your git history. Judges can see a profile before the
-            command exists.
+            Made-up numbers, not your history. Use it to see what a profile and a pair report look like.
           </p>
           <Ghost
             className="mt-3"
