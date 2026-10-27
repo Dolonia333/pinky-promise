@@ -1,0 +1,13 @@
+{
+  "name": "@pinky-promise/history",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@pinky-promise/shared": "0.1.0",
+    "fflate": "^0.8.3"
+  }
+}
