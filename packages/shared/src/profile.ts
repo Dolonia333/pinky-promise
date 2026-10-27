@@ -14,7 +14,7 @@ export interface CofounderNeed {
 
 export const STRENGTH_PHRASES: Record<Dimension, string> = {
   planning: "plan before you build",
-  quality: "test your work and fix what breaks",
+  quality: "back your work with tests",
   pace: "ship in small, frequent commits",
   exploration: "read the code before you change it",
   steering: "redirect your AI tools when they drift",
