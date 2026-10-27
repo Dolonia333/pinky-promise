@@ -19,11 +19,11 @@ Tick items as you finish them, in your pull request or right here on GitHub. The
 - [ ] **Z3** Deploy the web app (API is part of it). CI runs typecheck, tests, and format check on every pull request
   - [x] `DATABASE_URL` set locally (host deploy still needs the same env)
   - [x] `BETTER_AUTH_SECRET` set locally
-  - [ ] `BETTER_AUTH_URL` set to the public address
+  - [ ] `BETTER_AUTH_URL` set to the public address (tunnel demo live; lasting host still needed)
   - [ ] CI is green on `main`
-  - [ ] Send Shawnaya the address so the command can use it by default
+  - [x] Public demo URL for Shawnaya (Cloudflare quick tunnel while this machine is up): `https://new-factory-boston-mysql.trycloudflare.com` — swap for a lasting Vercel/Railway URL once logged into the host
 - [ ] **A2** GitHub sign-in as the main option, email as backup
-  - [ ] Create a GitHub OAuth app with callback `<site>/api/auth/callback/github`
+  - [ ] Create a GitHub OAuth app with callback `<site>/api/auth/callback/github` (needs a GitHub login in the browser)
   - [ ] Set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and `VITE_GITHUB_SIGN_IN=true`
   - [ ] Ten sign-ins in a row work
 - [x] **Z4** Landing page, sign-in, upload code screen, and profile page (works locally end to end)

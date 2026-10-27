@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 
 export default defineConfig({
-  server: { host: "0.0.0.0", port: 8080 },
+  server: { host: "0.0.0.0", port: 8080, allowedHosts: true },
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
   plugins: [tanstackStart(), viteReact(), tailwindcss(), nitro()],
 });
