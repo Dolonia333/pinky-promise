@@ -74,3 +74,27 @@ describe("compareFounders", () => {
     );
   });
 });
+
+describe("business founders", () => {
+  it("uses the labels each founder's areas should read as", () => {
+    const business = { frontend: "product", backend: "the build", infra: "roles", data: "proof" };
+    const report = compareFounders(
+      {
+        name: "Dana",
+        payload: { ...samplePayload, signals: { ...samplePayload.signals, areas: { frontend: 0.7, infra: 0.3 } } },
+        areaLabels: business,
+      },
+      {
+        name: "Lee",
+        payload: { ...samplePayload, signals: { ...samplePayload.signals, areas: { backend: 0.6, data: 0.4 } } },
+      },
+    );
+    expect(report.complements[0]).toBe("Dana covers product and roles; Lee covers backend and data.");
+  });
+
+  it("never leaves the report sections empty", () => {
+    const report = compareFounders({ name: "A", payload: samplePayload }, { name: "B", payload: samplePayload });
+    expect(report.complements.length).toBeGreaterThan(0);
+    expect(report.frictions.length).toBeGreaterThan(0);
+  });
+});

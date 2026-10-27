@@ -3,6 +3,9 @@ import type { Payload } from "./payload";
 import { HIGH_SCORE, LOW_SCORE } from "./scoring";
 import { formatHour, joinList } from "./text";
 
+export type ProfileLike = Pick<Payload, "scores" | "signals" | "confidence">;
+export type AreaLabels = Record<Area, string>;
+
 export interface CofounderNeed {
   summary: string;
   lookFor: string[];
@@ -25,22 +28,22 @@ export const NEED_PHRASES: Record<Dimension, string> = {
   steering: "pushes back when the AI goes off track",
 };
 
-export function strengths(payload: Payload): Dimension[] {
+export function strengths(payload: ProfileLike): Dimension[] {
   return DIMENSIONS.filter((dimension) => (payload.scores[dimension] ?? -1) >= HIGH_SCORE);
 }
 
-export function gaps(payload: Payload): Dimension[] {
+export function gaps(payload: ProfileLike): Dimension[] {
   return DIMENSIONS.filter((dimension) => {
     const value = payload.scores[dimension];
     return value !== null && value <= LOW_SCORE;
   });
 }
 
-export function strongAreas(payload: Payload, threshold = 0.3): Area[] {
+export function strongAreas(payload: ProfileLike, threshold = 0.3): Area[] {
   return AREAS.filter((area) => (payload.signals.areas[area] ?? 0) >= threshold);
 }
 
-export function missingAreas(payload: Payload, threshold = 0.1): Area[] {
+export function missingAreas(payload: ProfileLike, threshold = 0.1): Area[] {
   return AREAS.filter((area) => (payload.signals.areas[area] ?? 0) < threshold);
 }
 
@@ -49,19 +52,20 @@ export function peakHour(activeHours: number[]): number | null {
   return peak === 0 ? null : activeHours.indexOf(peak);
 }
 
-const areaList = (areas: Area[]) => joinList(areas.map((area) => AREA_LABELS[area]));
+export const areaList = (areas: Area[], labels: AreaLabels = AREA_LABELS) =>
+  joinList(areas.map((area) => labels[area]));
 
-export function cofounderYouNeed(payload: Payload): CofounderNeed {
+export function cofounderYouNeed(payload: ProfileLike, labels: AreaLabels = AREA_LABELS): CofounderNeed {
   const lookFor = gaps(payload).map((dimension) => NEED_PHRASES[dimension]);
   const coverAreas = missingAreas(payload);
   const strongIn = strongAreas(payload);
 
   const habits = strengths(payload).map((dimension) => STRENGTH_PHRASES[dimension]);
   const opening = habits.length > 0 ? `You ${joinList(habits)}` : "Your habits are fairly even";
-  const areaClause = strongIn.length > 0 ? `, and you're strongest on ${areaList(strongIn)}` : "";
+  const areaClause = strongIn.length > 0 ? `, and you're strongest on ${areaList(strongIn, labels)}` : "";
 
   const asks = [...lookFor];
-  if (coverAreas.length > 0) asks.push(`owns ${areaList(coverAreas)}`);
+  if (coverAreas.length > 0) asks.push(`owns ${areaList(coverAreas, labels)}`);
   const closing =
     asks.length > 0
       ? `Look for someone who ${joinList(asks)}.`
@@ -70,7 +74,7 @@ export function cofounderYouNeed(payload: Payload): CofounderNeed {
   return { summary: `${opening}${areaClause}. ${closing}`, lookFor, coverAreas };
 }
 
-export function howToWorkWithMe(payload: Payload): string[] {
+export function howToWorkWithMe(payload: ProfileLike): string[] {
   const { scores, signals } = payload;
   const tips: string[] = [];
   const isHigh = (dimension: Dimension) => (scores[dimension] ?? -1) >= HIGH_SCORE;

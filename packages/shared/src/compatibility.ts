@@ -1,13 +1,20 @@
 import { profileArchetype, type Archetype } from "./archetypes";
-import { AREAS, AREA_LABELS, DIMENSIONS, type Area, type Confidence, type Dimension } from "./dimensions";
-import type { Payload } from "./payload";
-import { NEED_PHRASES, STRENGTH_PHRASES, missingAreas, strongAreas } from "./profile";
+import { AREAS, AREA_LABELS, DIMENSIONS, type Confidence, type Dimension } from "./dimensions";
+import {
+  NEED_PHRASES,
+  STRENGTH_PHRASES,
+  areaList,
+  missingAreas,
+  strongAreas,
+  type AreaLabels,
+  type ProfileLike,
+} from "./profile";
 import { HIGH_SCORE, LOW_SCORE } from "./scoring";
-import { joinList } from "./text";
 
 export interface Founder {
   name: string;
-  payload: Payload;
+  payload: ProfileLike;
+  areaLabels?: AreaLabels;
 }
 
 export interface PairReport {
@@ -32,8 +39,6 @@ const RISKS: Partial<Record<Dimension, string>> = {
   quality: "how much to test",
 };
 
-const areaList = (areas: Area[]) => joinList(areas.map((area) => AREA_LABELS[area]));
-
 export function hoursOverlap(a: number[], b: number[]): number | null {
   const totalA = a.reduce((sum, value) => sum + value, 0);
   const totalB = b.reduce((sum, value) => sum + value, 0);
@@ -42,7 +47,7 @@ export function hoursOverlap(a: number[], b: number[]): number | null {
   return Math.round(shared * 100) / 100;
 }
 
-function scoreGaps(a: Payload, b: Payload): Record<Dimension, number | null> {
+function scoreGaps(a: ProfileLike, b: ProfileLike): Record<Dimension, number | null> {
   const entries = DIMENSIONS.map((dimension) => {
     const left = a.scores[dimension];
     const right = b.scores[dimension];
@@ -51,7 +56,7 @@ function scoreGaps(a: Payload, b: Payload): Record<Dimension, number | null> {
   return Object.fromEntries(entries) as Record<Dimension, number | null>;
 }
 
-function weakestConfidence(a: Payload, b: Payload): Confidence {
+function weakestConfidence(a: ProfileLike, b: ProfileLike): Confidence {
   const order: Confidence[] = ["none", "weak", "medium", "strong"];
   const levels = DIMENSIONS.flatMap((dimension) => [a.confidence[dimension], b.confidence[dimension]]).filter(
     (level) => level !== "none",
@@ -120,8 +125,10 @@ export function compareFounders(a: Founder, b: Founder): PairReport {
   const aOwns = strongAreas(a.payload).filter((area) => missingAreas(b.payload).includes(area));
   const bOwns = strongAreas(b.payload).filter((area) => missingAreas(a.payload).includes(area));
   const areasComplement = aOwns.length > 0 && bOwns.length > 0;
+  const aAreas = areaList(aOwns, a.areaLabels ?? AREA_LABELS);
+  const bAreas = areaList(bOwns, b.areaLabels ?? AREA_LABELS);
   if (areasComplement) {
-    complements.unshift(`${a.name} covers ${areaList(aOwns)}; ${b.name} covers ${areaList(bOwns)}.`);
+    complements.unshift(`${a.name} covers ${aAreas}; ${b.name} covers ${bAreas}.`);
   }
 
   const covered = AREAS.filter(
@@ -130,7 +137,7 @@ export function compareFounders(a: Founder, b: Founder): PairReport {
   const uniqueRisks = [...new Set(risks)];
 
   const opening = areasComplement
-    ? `You cover each other's gaps: ${a.name} on ${areaList(aOwns)}, ${b.name} on ${areaList(bOwns)}.`
+    ? `You cover each other's gaps: ${a.name} on ${aAreas}, ${b.name} on ${bAreas}.`
     : complements.length > 0
       ? "You bring different strengths to the table."
       : "You build in similar ways.";
@@ -150,8 +157,11 @@ export function compareFounders(a: Founder, b: Founder): PairReport {
   return {
     archetype: pairArchetype(a, b, gaps, areasComplement),
     headline,
-    complements,
-    frictions,
+    complements: complements.length > 0 ? complements : ["No sharp complement in the numbers yet."],
+    frictions:
+      frictions.length > 0
+        ? frictions
+        : ["No clear friction in the numbers. Still try a longer trial before you commit."],
     numbers: { hoursOverlap: overlap, areaCoverage: covered.length / AREAS.length, scoreGaps: gaps },
     nextStep,
     confidence: weakestConfidence(a.payload, b.payload),
