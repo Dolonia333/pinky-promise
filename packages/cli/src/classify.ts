@@ -21,7 +21,10 @@ const COMMAND_PATTERNS: Array<[CommandCategory, RegExp]> = [
     "install",
     /\b((npm|pnpm) (i|install|ci|add)|yarn add|pip3? install|uv (add|pip)|go (get|mod tidy)|cargo add|brew install|bundle install)\b/,
   ],
-  ["explore", /^\s*(ls|cat|head|tail|less|tree|pwd|find|grep|rg|ag|wc|git (log|show|diff|status|blame|branch))\b/],
+  [
+    "explore",
+    /^\s*(ls|cat|head|tail|less|tree|pwd|find|grep|rg|ag|wc|nl|sed -n|git (log|show|diff|status|blame|branch))\b/,
+  ],
   ["git", /^\s*git\b/],
 ];
 

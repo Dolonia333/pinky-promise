@@ -2,12 +2,14 @@ import { readdir } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { readCommits, readIdentity, repoRoot, type Commit } from "./sources/git";
 import { findSessionFiles, readSessions, type Session } from "./sources/claude-code";
+import { findCodexFiles, readCodexSessions } from "./sources/codex";
 
 export interface Scope {
   root: string;
   project: string | null;
   all: boolean;
   claudeDir: string;
+  codexDir: string;
   emails: string[];
   since: Date;
   until: Date;
@@ -61,7 +63,11 @@ function inScope(session: Session, scope: Scope, projectRoot: string | null): bo
 
 export async function collectEvidence(scope: Scope): Promise<Evidence> {
   const projectRoot = scope.project ? ((await repoRoot(scope.project)) ?? resolve(scope.project)) : null;
-  const allSessions = await readSessions(await findSessionFiles(scope.claudeDir));
+  const [claude, codex] = await Promise.all([
+    readSessions(await findSessionFiles(scope.claudeDir)),
+    readCodexSessions(await findCodexFiles(scope.codexDir)),
+  ]);
+  const allSessions = [...claude, ...codex];
   const sessions = allSessions.filter((session) => inScope(session, scope, projectRoot));
 
   const repoPaths = await selectRepos(scope, sessions);

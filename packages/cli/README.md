@@ -2,7 +2,7 @@
 
 **Find out before you pinky promise.**
 
-One command reads your git history and Claude Code sessions on your own machine, scores how you build, and tells you what kind of co-founder would cover your gaps.
+One command reads your git history and Claude Code or Codex sessions on your own machine, scores how you build, and tells you what kind of co-founder would cover your gaps.
 
 ```bash
 npx pinky-promise-cli analyze --dry-run
@@ -18,7 +18,7 @@ Only numbers, and only after you read them and type `yes`: counts, rates, and ti
 
 ```
 --project <path>   Analyze one project only
---all              Include every Claude Code session on this machine
+--all              Include every Claude Code and Codex session on this machine
 --dry-run          Show the preview and never upload
 --json             Print only the payload as JSON
 --email <email>    Count commits made with this email as yours (repeatable)

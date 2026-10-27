@@ -5,6 +5,7 @@ import { collectEvidence, type Scope } from "./evidence";
 import { localHighlights } from "./highlights";
 import { buildPayload } from "./payload";
 import { defaultClaudeDir } from "./sources/claude-code";
+import { defaultCodexDir } from "./sources/codex";
 import * as terminal from "./terminal";
 import { UPLOAD_CODE, UploadError, normalizeCode, saveProfile, uploadProfile } from "./upload";
 
@@ -18,6 +19,7 @@ export function scopeFor(options: Options, now = new Date(), cwd = process.cwd()
     project: options.project ? resolve(cwd, options.project) : null,
     all: options.all,
     claudeDir: defaultClaudeDir(),
+    codexDir: defaultCodexDir(),
     emails: options.emails,
     since,
     until: now,
@@ -39,7 +41,7 @@ export async function analyze(options: Options, version: string): Promise<number
   const evidence = await collectEvidence(scope);
   if (evidence.repos.length === 0 && evidence.sessions.length === 0) {
     terminal.failure(
-      "\nNo commits of yours or Claude Code sessions found here. Run it from your projects folder, " +
+      "\nNo commits of yours or AI coding sessions found here. Run it from your projects folder, " +
         "pass --project <path>, or use --email if you commit with a different address.",
     );
     return 1;

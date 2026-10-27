@@ -13,8 +13,11 @@ export interface ToolCall {
   outcome: Outcome;
 }
 
+export type SessionSource = "claude_code" | "codex";
+
 export interface Session {
   id: string;
+  source: SessionSource;
   cwd: string | null;
   start: Date;
   end: Date;
@@ -108,6 +111,7 @@ function blockText(content: unknown): string {
 export function parseSession(id: string, text: string): Session | null {
   const session: Session = {
     id,
+    source: "claude_code",
     cwd: null,
     start: new Date(8.64e15),
     end: new Date(-8.64e15),

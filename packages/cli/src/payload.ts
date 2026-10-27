@@ -13,7 +13,9 @@ export function buildPayload(evidence: Evidence, analyzerVersion: string): Paylo
   };
   const sources: Source[] = [];
   if (counts.commits > 0) sources.push("git");
-  if (counts.sessions > 0) sources.push("claude_code");
+  for (const source of ["claude_code", "codex"] as const) {
+    if (evidence.sessions.some((session) => session.source === source)) sources.push(source);
+  }
 
   const payload = payloadSchema.parse({
     analyzerVersion,

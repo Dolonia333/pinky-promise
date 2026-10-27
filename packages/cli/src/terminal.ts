@@ -23,12 +23,22 @@ export function printIntro(version: string): void {
   line(pc.yellow("Run this only on your own machine and your own projects, never on employer code or a work laptop."));
 }
 
+const TOOL_NAMES: Partial<Record<Payload["sources"][number], string>> = {
+  claude_code: "Claude Code",
+  codex: "Codex",
+};
+
+function toolNames(payload: Payload): string {
+  const names = payload.sources.flatMap((source) => TOOL_NAMES[source] ?? []);
+  return names.length > 0 ? ` (${names.join(" and ")})` : "";
+}
+
 export function printFound(payload: Payload, where: string): void {
   const { repos, commits, sessions } = payload.counts;
   line();
   line(
     `${pc.green("✔")} Read ${plural(repos, "repo")}, ${plural(commits, "commit")} of yours, ` +
-      `and ${plural(sessions, "Claude Code session")}`,
+      `and ${plural(sessions, "AI coding session")}${toolNames(payload)}`,
   );
   line(pc.dim(`  ${where}, ${payload.window.from} to ${payload.window.to}`));
 }

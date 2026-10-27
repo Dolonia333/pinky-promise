@@ -41,12 +41,15 @@ async function analyzeFixture() {
   ]);
   const claudeDir = join(home, ".claude", "projects");
   installSession(claudeDir, "-Users-maya-acme-secret-startup", "s1", fixture("session.jsonl"));
+  const codexDir = join(home, ".codex", "sessions");
+  installSession(join(codexDir, "2026", "10"), "21", "rollout-1", fixture("codex-session.jsonl"));
 
   const evidence = await collectEvidence({
     root: projects,
     project: null,
     all: true,
     claudeDir,
+    codexDir,
     emails: [],
     since: new Date("2025-10-27"),
     until: new Date("2026-10-26"),
@@ -64,6 +67,7 @@ describe("finding your work", () => {
       project: null,
       all: false,
       claudeDir: join(tempDir(), "none"),
+      codexDir: join(tempDir(), "none"),
       emails: [],
       since: new Date("2025-10-27"),
       until: new Date("2026-10-26"),
@@ -75,8 +79,8 @@ describe("finding your work", () => {
 describe("what leaves the machine", () => {
   it("finds the evidence it needs", async () => {
     const { payload } = await analyzeFixture();
-    expect(payload.counts).toEqual({ repos: 1, commits: 1, sessions: 1 });
-    expect(payload.sources).toEqual(["git", "claude_code"]);
+    expect(payload.counts).toEqual({ repos: 1, commits: 1, sessions: 2 });
+    expect(payload.sources).toEqual(["git", "claude_code", "codex"]);
   });
 
   it("never includes prompts, code, paths, names, emails, commit messages, or secrets", async () => {

@@ -1,0 +1,22 @@
+{"timestamp": "2026-10-21T16:00:00.000Z", "type": "session_meta", "payload": {"id": "codex-fixture", "timestamp": "2026-10-21T16:00:00.000Z", "cwd": "/Users/maya/acme-secret-startup", "originator": "codex_cli_rs", "cli_version": "0.50.0", "instructions": "Project Nightingale rules"}}
+{"timestamp": "2026-10-21T16:00:00.000Z", "type": "turn_context", "payload": {"cwd": "/Users/maya/acme-secret-startup", "approval_policy": "on-request", "model": "gpt-5-codex"}}
+{"timestamp": "2026-10-21T16:00:00.000Z", "type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "<environment_context>\n  <cwd>/Users/maya/acme-secret-startup</cwd>\n</environment_context>"}]}}
+{"timestamp": "2026-10-21T16:01:00.000Z", "type": "event_msg", "payload": {"type": "user_message", "message": "Fix login using sk-ant-api03-SUPERSECRETKEY for maya@acme.io in Project Nightingale"}}
+{"timestamp": "2026-10-21T16:01:00.000Z", "type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Fix login using sk-ant-api03-SUPERSECRETKEY for maya@acme.io in Project Nightingale"}]}}
+{"timestamp": "2026-10-21T16:02:00.000Z", "type": "response_item", "payload": {"type": "function_call", "name": "shell", "arguments": "{\"command\": [\"bash\", \"-lc\", \"rg signIn /Users/maya/acme-secret-startup/src\"]}", "call_id": "c1"}}
+{"timestamp": "2026-10-21T16:02:00.000Z", "type": "response_item", "payload": {"type": "function_call_output", "call_id": "c1", "output": "{\"output\": \"src/auth.ts:12: signIn() hunter2\", \"metadata\": {\"exit_code\": 0, \"duration_seconds\": 0.1}}"}}
+{"timestamp": "2026-10-21T16:03:00.000Z", "type": "response_item", "payload": {"type": "function_call", "name": "update_plan", "arguments": "{\"plan\": [{\"step\": \"Patch Login.tsx for Nightingale\", \"status\": \"in_progress\"}]}", "call_id": "c2"}}
+{"timestamp": "2026-10-21T16:03:00.000Z", "type": "response_item", "payload": {"type": "function_call_output", "call_id": "c2", "output": "Plan updated"}}
+{"timestamp": "2026-10-21T16:04:00.000Z", "type": "response_item", "payload": {"type": "custom_tool_call", "name": "apply_patch", "call_id": "c3", "input": "*** Begin Patch\n*** Update File: src/components/Login.tsx\n+const token = 'ghp_ABCDEF1234567890';\n*** End Patch"}}
+{"timestamp": "2026-10-21T16:04:00.000Z", "type": "response_item", "payload": {"type": "custom_tool_call_output", "call_id": "c3", "output": "Success. Updated the following files:\nM src/components/Login.tsx"}}
+{"timestamp": "2026-10-21T16:05:00.000Z", "type": "response_item", "payload": {"type": "function_call", "name": "shell", "arguments": "{\"command\": [\"bash\", \"-lc\", \"npm test -- --grep Nightingale\"]}", "call_id": "c4"}}
+{"timestamp": "2026-10-21T16:05:00.000Z", "type": "response_item", "payload": {"type": "function_call_output", "call_id": "c4", "output": "{\"output\": \"FAIL src/auth.test.ts\", \"metadata\": {\"exit_code\": 1}}"}}
+{"timestamp": "2026-10-21T16:06:00.000Z", "type": "response_item", "payload": {"type": "function_call", "name": "shell", "arguments": "{\"command\": [\"bash\", \"-lc\", \"rm -rf build && localStorage-reset\"]}", "call_id": "c5"}}
+{"timestamp": "2026-10-21T16:06:00.000Z", "type": "response_item", "payload": {"type": "function_call_output", "call_id": "c5", "output": "exec command rejected by user"}}
+{"timestamp": "2026-10-21T16:07:00.000Z", "type": "event_msg", "payload": {"type": "turn_aborted", "reason": "interrupted"}}
+{"timestamp": "2026-10-21T16:08:00.000Z", "type": "event_msg", "payload": {"type": "user_message", "message": "no, keep the session cookie, don't use localStorage"}}
+{"timestamp": "2026-10-21T16:08:00.000Z", "type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "no, keep the session cookie, don't use localStorage"}]}}
+{"timestamp": "2026-10-21T16:09:00.000Z", "type": "response_item", "payload": {"type": "function_call", "name": "shell", "arguments": "{\"command\": [\"npx\", \"vitest\", \"run\"]}", "call_id": "c6"}}
+{"timestamp": "2026-10-21T16:09:00.000Z", "type": "response_item", "payload": {"type": "function_call_output", "call_id": "c6", "output": "{\"output\": \"Tests 4 passed\", \"metadata\": {\"exit_code\": 0}}"}}
+{"timestamp": "2026-10-21T16:10:00.000Z", "type": "event_msg", "payload": {"type": "token_count", "info": null}}
+not json
