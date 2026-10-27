@@ -1,3 +1,4 @@
+import { scoreProfile } from "@pinky-promise/shared";
 import { getSql } from "@/lib/db";
 import { boardFromEvents, challengePayload, CHALLENGES, renderBrief, type BoardEvent } from "./challenge.ts";
 import { archetypeOf, cofounderNeed, evidenceLines, mergeProfiles, pairReport, workWithMe } from "./fit.ts";
@@ -167,20 +168,33 @@ export async function redeemCode(
 ): Promise<{ ok: true; profileId: string; path: string } | { ok: false; status: number; error: string }> {
   const parsed = payloadSchema.safeParse(body);
   if (!parsed.success) return { ok: false, status: 400, error: "Payload doesn't match the agreed shape." };
+  if (parsed.data.sources.includes("challenge")) {
+    return { ok: false, status: 400, error: "Challenge profiles can only come from the challenge." };
+  }
+  const payload: AnalyzerPayload = {
+    ...parsed.data,
+    ...scoreProfile(parsed.data.signals, parsed.data.counts),
+  };
+
   const normalized = code.trim().toUpperCase();
   const sql = await getSql();
-  const rows = await sql.query<{ user_id: string; expires_at: unknown; used_at: unknown }>(
-    `select user_id, expires_at, used_at from upload_codes where code = $1`,
+  const claimed = await sql.query<{ user_id: string }>(
+    `update upload_codes set used_at = now()
+     where code = $1 and used_at is null and expires_at > now()
+     returning user_id`,
     [normalized],
   );
-  const row = rows[0];
-  if (!row) return { ok: false, status: 404, error: "That code doesn't exist." };
-  if (row.used_at) return { ok: false, status: 409, error: "That code was already used." };
-  if (new Date(stamp(row.expires_at)).getTime() < Date.now()) {
+  const owner = claimed[0];
+  if (!owner) {
+    const rows = await sql.query<{ used_at: unknown }>(`select used_at from upload_codes where code = $1`, [
+      normalized,
+    ]);
+    if (!rows[0]) return { ok: false, status: 404, error: "That code doesn't exist." };
+    if (rows[0].used_at) return { ok: false, status: 409, error: "That code was already used." };
     return { ok: false, status: 410, error: "That code expired. Get a new one." };
   }
-  const profileId = await insertPayload(row.user_id, parsed.data, "technical", false);
-  await sql.query(`update upload_codes set used_at = now() where code = $1`, [normalized]);
+
+  const profileId = await insertPayload(owner.user_id, payload, "technical", false);
   return { ok: true, profileId, path: "/profile" };
 }
 

@@ -251,7 +251,7 @@ export function challengePayload(board: Board, startedAt: string, endedAt: strin
   const activeHours = Array.from({ length: 24 }, (_, i) => (i === hour ? 1 : 0));
   const level = board.adds >= 3 ? "medium" : "weak";
   return {
-    analyzerVersion: "challenge-0.1.0",
+    analyzerVersion: "0.1.0",
     sources: ["challenge"],
     window: { from: startedAt.slice(0, 10), to: endedAt.slice(0, 10) },
     counts: { repos: 0, commits: 0, sessions: 1 },

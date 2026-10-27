@@ -3,7 +3,16 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Check, Copy, House, Timer, UserRound, Users } from "lucide-react";
 import { RedirectToSignIn, UserButton } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { SCORE_LABEL, areaWord, type AreaKey, type Background, type ScoreKey, type Scores } from "@/lib/pinky/types";
+import {
+  AREA_KEYS,
+  SCORE_KEYS,
+  SCORE_LABEL,
+  areaWord,
+  type AreaKey,
+  type Background,
+  type ScoreKey,
+  type Scores,
+} from "@/lib/pinky/types";
 
 export function Mark({ className = "size-8" }: { className?: string }) {
   return (
@@ -100,7 +109,6 @@ export function useLoad<T>(load: () => Promise<T>, deps: unknown[]) {
     return () => {
       cancel = true;
     };
-    // deps are the caller's identity for the query
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
   return { data, error, loading, reload: () => setData(null) };
@@ -154,30 +162,31 @@ export function CopyButton({ text, label }: { text: string; label: string }) {
 export function ScoreBars({ scores, confidence }: { scores: Scores; confidence: Record<ScoreKey, string> }) {
   return (
     <ul className="space-y-3">
-      {(Object.keys(SCORE_LABEL) as ScoreKey[]).map((key) => (
-        <li key={key}>
-          <div className="mb-1 flex items-baseline justify-between text-sm">
-            <span>{SCORE_LABEL[key]}</span>
-            <span className="text-dust">
-              {scores[key]} · {confidence[key]}
-            </span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-raised">
-            <div className="h-full rounded-full bg-seal" style={{ width: `${scores[key]}%` }} />
-          </div>
-        </li>
-      ))}
+      {SCORE_KEYS.map((key) => {
+        const value = scores[key];
+        return (
+          <li key={key}>
+            <div className="mb-1 flex items-baseline justify-between text-sm">
+              <span>{SCORE_LABEL[key]}</span>
+              <span className="text-dust">{value === null ? "Not enough data" : `${value} · ${confidence[key]}`}</span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-raised">
+              <div className="h-full rounded-full bg-seal" style={{ width: `${value ?? 0}%` }} />
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-export function Areas({ areas, background }: { areas: Record<AreaKey, number>; background: Background }) {
+export function Areas({ areas, background }: { areas: Partial<Record<AreaKey, number>>; background: Background }) {
   return (
     <ul className="grid grid-cols-2 gap-2">
-      {(Object.keys(areas) as AreaKey[]).map((key) => (
+      {AREA_KEYS.map((key) => (
         <li key={key} className="rounded-2xl bg-raised px-3 py-2">
           <p className="text-xs uppercase tracking-wide text-dust">{areaWord(key, background)}</p>
-          <p className="font-display text-xl">{Math.round(areas[key] * 100)}%</p>
+          <p className="font-display text-xl">{Math.round((areas[key] ?? 0) * 100)}%</p>
         </li>
       ))}
     </ul>

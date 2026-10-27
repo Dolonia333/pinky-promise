@@ -1,8 +1,8 @@
 import { pairReport } from "./fit.ts";
 import { profileFromPayload } from "./payload.ts";
 import type { AnalyzerPayload } from "./payload.ts";
-import type { AreaKey, Background, ProfileInput, Scores } from "./types.ts";
-import { AREA_KEYS, SCORE_KEYS } from "./types.ts";
+import type { AreaKey, Background, ProfileInput } from "./types.ts";
+import { AREA_KEYS, SCORE_KEYS, type ScoreKey } from "./types.ts";
 
 export type CohortPerson = ProfileInput & { domain: string; goals: "full-time" | "nights" };
 
@@ -11,8 +11,8 @@ type Seed = {
   background: Background;
   domain: string;
   goals: "full-time" | "nights";
-  scores: Scores;
-  areas: Record<AreaKey, number>;
+  scores: Record<ScoreKey, number>;
+  areas: Partial<Record<AreaKey, number>>;
 };
 
 const SEEDS: Seed[] = [
@@ -184,7 +184,7 @@ function blankHours(): number[] {
 
 function toProfile(seed: Seed, index: number): CohortPerson {
   const payload: AnalyzerPayload = {
-    analyzerVersion: "cohort-0.1.0",
+    analyzerVersion: "0.1.0",
     sources: seed.background === "business" ? ["challenge"] : ["git", "claude_code"],
     window: { from: "2026-01-01", to: "2026-10-26" },
     counts: {
@@ -261,28 +261,31 @@ export function topMatches(you: ProfileInput, people: CohortPerson[], limit = 3)
     .map(({ sort: _sort, ...hit }) => hit);
 }
 
+const score = (value: number | null) => value ?? 50;
+
 export function scoreFit(
   a: ProfileInput & { domain?: string; goals?: string },
   b: ProfileInput & { domain?: string; goals?: string },
 ): number {
-  let score = 36;
+  let fit = 36;
   for (const key of AREA_KEYS) {
-    const hi = Math.max(a.signals.areas[key], b.signals.areas[key]);
-    const lo = Math.min(a.signals.areas[key], b.signals.areas[key]);
-    if (hi >= 0.34 && lo <= 0.2) score += 14;
+    const hi = Math.max(a.signals.areas[key] ?? 0, b.signals.areas[key] ?? 0);
+    const lo = Math.min(a.signals.areas[key] ?? 0, b.signals.areas[key] ?? 0);
+    if (hi >= 0.34 && lo <= 0.2) fit += 14;
   }
-  const pace = Math.abs(a.scores.pace - b.scores.pace);
-  if (pace > 28) score -= (pace - 28) * 0.7;
-  const qualityGap = Math.abs(a.scores.quality - b.scores.quality);
-  if (qualityGap > 18 && Math.min(a.scores.quality, b.scores.quality) < 62) score += 8;
-  const planGap = Math.abs(a.scores.planning - b.scores.planning);
-  if (planGap > 15 && Math.min(a.scores.planning, b.scores.planning) < 68) score += 6;
-  if (a.domain && b.domain && a.domain === b.domain) score += 10;
-  if (a.goals && b.goals && a.goals === b.goals) score += 6;
-  if (a.background !== b.background) score += 8;
-  const avg = SCORE_KEYS.reduce((sum, k) => sum + Math.abs(a.scores[k] - b.scores[k]), 0) / SCORE_KEYS.length;
-  if (avg < 8) score -= 18;
-  return Math.round(score);
+  const pace = Math.abs(score(a.scores.pace) - score(b.scores.pace));
+  if (pace > 28) fit -= (pace - 28) * 0.7;
+  const qualityGap = Math.abs(score(a.scores.quality) - score(b.scores.quality));
+  if (qualityGap > 18 && Math.min(score(a.scores.quality), score(b.scores.quality)) < 62) fit += 8;
+  const planGap = Math.abs(score(a.scores.planning) - score(b.scores.planning));
+  if (planGap > 15 && Math.min(score(a.scores.planning), score(b.scores.planning)) < 68) fit += 6;
+  if (a.domain && b.domain && a.domain === b.domain) fit += 10;
+  if (a.goals && b.goals && a.goals === b.goals) fit += 6;
+  if (a.background !== b.background) fit += 8;
+  const avg =
+    SCORE_KEYS.reduce((sum, k) => sum + Math.abs(score(a.scores[k]) - score(b.scores[k])), 0) / SCORE_KEYS.length;
+  if (avg < 8) fit -= 18;
+  return Math.round(fit);
 }
 
 export type RoomPair = { a: string; b: string; note: string };
@@ -308,7 +311,7 @@ export function matchRoom(people: CohortPerson[]): RoomRound {
     pairs.push({
       a: left.displayName,
       b: right.displayName,
-      note: report.archetype.name === "The Echo" ? "Too alike to learn much" : report.archetype.name,
+      note: report.archetype.name === "Mirror Match" ? "Too alike to learn much" : report.archetype.name,
     });
   }
   const byeIndex = people.findIndex((_, i) => !used.has(i));

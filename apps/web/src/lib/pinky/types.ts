@@ -1,28 +1,22 @@
-export const SCORE_KEYS = ["planning", "quality", "pace", "exploration", "steering"] as const;
-export type ScoreKey = (typeof SCORE_KEYS)[number];
-export type Scores = Record<ScoreKey, number>;
-export type Confidence = "strong" | "medium" | "weak";
-export type AreaKey = "frontend" | "backend" | "infra" | "data";
+import {
+  AREAS,
+  DIMENSIONS,
+  DIMENSION_LABELS,
+  type Area,
+  type Confidence,
+  type Dimension,
+  type Scores,
+  type Signals,
+} from "@pinky-promise/shared";
+
+export type { Confidence, Scores, Signals };
+export type ScoreKey = Dimension;
+export type AreaKey = Area;
 export type Background = "technical" | "business" | "both";
 
-export type Signals = {
-  testRunsPerSession: number;
-  testFixRate: number;
-  exploreBeforeEditRate: number;
-  planBeforeCodeRate: number;
-  agentRejectRate: number;
-  medianCommitLines: number;
-  commitsPerActiveDay: number;
-  testCommitShare: number;
-  activeHours: number[];
-  areas: Record<AreaKey, number>;
-  sharedRepos: {
-    count: number;
-    separateAreasRate: number;
-    buildsOnOthersRate: number;
-    coAuthoredRate: number;
-  };
-};
+export const SCORE_KEYS: readonly ScoreKey[] = DIMENSIONS;
+export const SCORE_LABEL: Record<ScoreKey, string> = DIMENSION_LABELS;
+export const AREA_KEYS: AreaKey[] = [...AREAS];
 
 export type ProfileInput = {
   id: string;
@@ -40,25 +34,24 @@ export type ProfileInput = {
   uploadCount: number;
 };
 
-export const SCORE_LABEL: Record<ScoreKey, string> = {
-  planning: "Planning",
-  quality: "Quality",
-  pace: "Pace",
-  exploration: "Exploration",
-  steering: "Steering",
+const BUSINESS_AREAS: Record<AreaKey, string> = {
+  frontend: "product",
+  backend: "the build",
+  infra: "roles",
+  data: "proof",
 };
 
-export const AREA_KEYS: AreaKey[] = ["frontend", "backend", "infra", "data"];
+const TECHNICAL_AREAS: Record<AreaKey, string> = {
+  frontend: "frontend",
+  backend: "backend",
+  infra: "infrastructure",
+  data: "data",
+};
+
+export function areaLabels(background: Background): Record<AreaKey, string> {
+  return background === "business" ? BUSINESS_AREAS : TECHNICAL_AREAS;
+}
 
 export function areaWord(area: AreaKey, background: Background): string {
-  if (background === "business") {
-    if (area === "frontend") return "product";
-    if (area === "backend") return "the build";
-    if (area === "infra") return "roles";
-    return "proof";
-  }
-  if (area === "frontend") return "frontend";
-  if (area === "backend") return "backend";
-  if (area === "infra") return "infrastructure";
-  return "data";
+  return areaLabels(background)[area];
 }
