@@ -1,6 +1,6 @@
 {
   "name": "pinky-promise-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Find out how you build, and who you should build with. Runs locally; only numbers leave your machine.",
   "license": "MIT",
   "type": "module",

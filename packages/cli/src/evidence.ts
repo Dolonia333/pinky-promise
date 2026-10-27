@@ -43,7 +43,8 @@ async function selectRepos(scope: Scope, sessions: Session[]): Promise<string[]>
     const root = await repoRoot(scope.project);
     return root ? [root] : [];
   }
-  const found = await findGitRepos(scope.root);
+  const enclosing = await repoRoot(scope.root);
+  const found = enclosing ? [enclosing] : await findGitRepos(scope.root);
   if (!scope.all) return found;
   const fromSessions = await Promise.all(
     [...new Set(sessions.map((session) => session.cwd).filter((cwd): cwd is string => !!cwd))].map(repoRoot),

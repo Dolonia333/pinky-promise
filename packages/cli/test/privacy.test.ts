@@ -54,6 +54,24 @@ async function analyzeFixture() {
   return { evidence, payload: buildPayload(evidence, "0.1.0") };
 }
 
+describe("finding your work", () => {
+  it("finds the project when run from a subfolder inside it", async () => {
+    const repo = makeRepo(join(tempDir(), "app"), [
+      { author: "me", message: "Start", files: { "web/src/App.tsx": "a\n" }, date: "2026-09-02T14:00:00" },
+    ]);
+    const evidence = await collectEvidence({
+      root: join(repo, "web", "src"),
+      project: null,
+      all: false,
+      claudeDir: join(tempDir(), "none"),
+      emails: [],
+      since: new Date("2025-10-27"),
+      until: new Date("2026-10-26"),
+    });
+    expect(evidence.repos).toHaveLength(1);
+  });
+});
+
 describe("what leaves the machine", () => {
   it("finds the evidence it needs", async () => {
     const { payload } = await analyzeFixture();
