@@ -1,0 +1,27 @@
+{
+  "name": "pinky-promise",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "analyze": "tsx packages/cli/src/index.ts analyze",
+    "build": "npm run build --workspace pinky-promise-cli",
+    "typecheck": "tsc -p packages/shared && tsc -p packages/cli",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "lint": "prettier --check ."
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

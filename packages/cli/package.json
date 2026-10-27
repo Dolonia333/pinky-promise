@@ -1,0 +1,32 @@
+{
+  "name": "pinky-promise-cli",
+  "version": "0.1.0",
+  "description": "Find out how you build, and who you should build with. Runs locally; only numbers leave your machine.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "pinky-promise-cli": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naya-ai/pinky-promise.git",
+    "directory": "packages/cli"
+  },
+  "dependencies": {
+    "picocolors": "^1.1.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@pinky-promise/shared": "0.1.0",
+    "tsup": "^9.0.0"
+  }
+}
