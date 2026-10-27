@@ -1,13 +1,14 @@
 import { profileArchetype, type Archetype } from "./archetypes";
 import { AREAS, AREA_LABELS, DIMENSIONS, type Confidence, type Dimension } from "./dimensions";
 import {
-  NEED_PHRASES,
-  STRENGTH_PHRASES,
+  NEED_PHRASES_BY,
+  STRENGTH_PHRASES_BY,
   areaList,
   missingAreas,
   strongAreas,
   type AreaLabels,
   type ProfileLike,
+  type Voice,
 } from "./profile";
 import { HIGH_SCORE, LOW_SCORE } from "./scoring";
 
@@ -15,6 +16,7 @@ export interface Founder {
   name: string;
   payload: ProfileLike;
   areaLabels?: AreaLabels;
+  voice?: Voice;
 }
 
 export interface PairReport {
@@ -87,6 +89,9 @@ export function compareFounders(a: Founder, b: Founder): PairReport {
   const frictions: string[] = [];
   const risks: string[] = [];
   const gaps = scoreGaps(a.payload, b.payload);
+  const aVoice = a.voice ?? "builder";
+  const bVoice = b.voice ?? "builder";
+  const sharedVoice: Voice = aVoice === bVoice ? aVoice : "business";
 
   for (const dimension of DIMENSIONS) {
     const left = a.payload.scores[dimension];
@@ -94,13 +99,17 @@ export function compareFounders(a: Founder, b: Founder): PairReport {
     if (left === null || right === null) continue;
 
     if (left >= HIGH_SCORE && right <= LOW_SCORE + 5) {
-      complements.push(`${a.name} brings what ${b.name} is lighter on: someone who ${NEED_PHRASES[dimension]}.`);
+      complements.push(
+        `${a.name} brings what ${b.name} is lighter on: someone who ${NEED_PHRASES_BY[aVoice][dimension]}.`,
+      );
     } else if (right >= HIGH_SCORE && left <= LOW_SCORE + 5) {
-      complements.push(`${b.name} brings what ${a.name} is lighter on: someone who ${NEED_PHRASES[dimension]}.`);
+      complements.push(
+        `${b.name} brings what ${a.name} is lighter on: someone who ${NEED_PHRASES_BY[bVoice][dimension]}.`,
+      );
     } else if (left >= HIGH_SCORE && right >= HIGH_SCORE) {
-      complements.push(`You both ${STRENGTH_PHRASES[dimension]}. That's a shared foundation.`);
+      complements.push(`You both ${STRENGTH_PHRASES_BY[sharedVoice][dimension]}. That's a shared foundation.`);
     } else if (left <= LOW_SCORE && right <= LOW_SCORE) {
-      frictions.push(`Neither of you is someone who ${NEED_PHRASES[dimension]}. Decide who owns it.`);
+      frictions.push(`Neither of you is someone who ${NEED_PHRASES_BY[sharedVoice][dimension]}. Decide who owns it.`);
       risks.push(RISKS[dimension] ?? dimension);
     }
   }

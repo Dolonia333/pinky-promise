@@ -98,3 +98,22 @@ describe("business founders", () => {
     expect(report.frictions.length).toBeGreaterThan(0);
   });
 });
+
+describe("mixed pairs", () => {
+  it("describes each founder in their own terms", () => {
+    const report = compareFounders(
+      {
+        name: "Dana",
+        voice: "business",
+        payload: { ...samplePayload, scores: { planning: 50, quality: 80, pace: 50, exploration: 50, steering: 50 } },
+      },
+      {
+        name: "Lee",
+        payload: { ...samplePayload, scores: { planning: 50, quality: 30, pace: 50, exploration: 50, steering: 50 } },
+      },
+    );
+    expect(report.complements).toContain(
+      "Dana brings what Lee is lighter on: someone who double-checks the facts and numbers.",
+    );
+  });
+});

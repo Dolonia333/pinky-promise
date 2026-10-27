@@ -84,3 +84,23 @@ describe("profiles without coding areas", () => {
     expect(need.summary).not.toContain("owns");
   });
 });
+
+describe("business wording", () => {
+  const founder = {
+    ...samplePayload,
+    scores: { planning: 80, quality: 30, pace: 75, exploration: 50, steering: 50 },
+    signals: { ...samplePayload.signals, areas: {}, topics: { fundraising: 0.5, customers: 0.3, sales: 0.2 } },
+  };
+
+  it("describes business founders in their own terms", () => {
+    expect(cofounderYouNeed(founder, undefined, "business").summary).toBe(
+      "You plan before you act and move fast and work in short bursts, and most of your work is on fundraising and customers. " +
+        "Look for someone who double-checks the facts and numbers.",
+    );
+  });
+
+  it("gives business tips without coding words", () => {
+    const tips = howToWorkWithMe(founder, "business").join(" ");
+    expect(tips).not.toMatch(/test|code|commit|demo/i);
+  });
+});
