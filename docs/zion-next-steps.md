@@ -1,5 +1,7 @@
 # Next steps for Zion
 
+Tick off tasks in [zion-checklist.md](zion-checklist.md).
+
 The analyzer command, scoring, and report logic are done and on `main`. Everything below is what's left on the server and web side, in the order it unblocks the demo.
 
 ## Synced after your first merge
